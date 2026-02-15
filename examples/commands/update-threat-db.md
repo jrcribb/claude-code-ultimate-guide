@@ -1,3 +1,8 @@
+---
+name: update-threat-db
+description: "Research and update the AI agent security threat intelligence database"
+---
+
 # Update Threat Database
 
 Research and update the AI agent security threat intelligence database with the latest threats, CVEs, malicious skills, and campaigns.

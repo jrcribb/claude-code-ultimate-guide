@@ -1,3 +1,8 @@
+---
+name: security-audit
+description: "Comprehensive security audit with scored posture assessment"
+---
+
 # Security Audit
 
 Comprehensive security audit of your project AND Claude Code configuration. Analyzes secrets exposure, injection surfaces, dependencies, hook security, and produces a scored security posture assessment.

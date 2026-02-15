@@ -1,3 +1,8 @@
+---
+name: security-check
+description: "Quick configuration security check against known threats database"
+---
+
 # Security Check
 
 Quick configuration security check against known threats database. Verifies your Claude Code setup for known malicious skills, vulnerable MCPs, dangerous patterns, and exposed secrets.

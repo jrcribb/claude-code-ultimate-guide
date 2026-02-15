@@ -1,3 +1,8 @@
+---
+name: review-pr
+description: "Perform a comprehensive code review of a pull request"
+---
+
 # Review Pull Request
 
 Perform a comprehensive code review of a pull request.

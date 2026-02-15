@@ -1,3 +1,8 @@
+---
+name: git-worktree
+description: "Create isolated git worktrees for feature development without switching branches"
+---
+
 # Git Worktree Setup
 
 Create isolated git worktrees for feature development without switching branches.

@@ -1,3 +1,8 @@
+---
+name: diagnose
+description: "Interactive troubleshooting assistant for Claude Code issues"
+---
+
 # Claude Code Diagnostic Assistant
 
 Interactive troubleshooting assistant for Claude Code issues. Supports FR/EN.
