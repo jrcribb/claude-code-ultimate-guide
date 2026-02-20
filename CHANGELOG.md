@@ -6,6 +6,64 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+/- **Resource evaluation**: "Evaluating AGENTS.md" — ETH Zürich arXiv 2602.11988 (score 4/5)
+  - First empirical study on repository-level context files (AGENTS.md/CLAUDE.md) effectiveness
+  - Developer-written context files: **+4% agent success rate**; LLM-generated: **-3%** vs no context file
+  - Inference cost penalty: **+20-23% in all cases** when file contains non-essential information
+  - Mechanism: agents follow all instructions faithfully, even irrelevant ones → broader exploration, longer reasoning chains
+  - Recommendation: include only build/test commands + project-specific tooling; style guides → separate docs
+  - Benchmark: AGENTbench (138 instances, 12 repos) + SWE-bench Lite; 4 coding agents (Claude Code, Codex, Qwen Code)
+  - Source: Gloaguen, Mündler, Müller, Raychev, Vechev — ETH Zürich, February 2026
+  - Evaluation archived: `docs/resource-evaluations/agents-md-empirical-study-2602-11988.md`
+
+### Changed
+
+- `guide/ultimate-guide.md`: Added empirical research backing to CLAUDE.md Token-Saving Techniques section (~l.13393-13411)
+  - New callout: context files with non-essential info add +20-23% inference cost regardless of line count (Gloaguen et al., 2026)
+  - New research note after "Keep CLAUDE.md concise" best practice: +4% (dev-written) / -3% (LLM-generated) with mechanism explanation and tooling recommendation
+
+- `guide/workflows/spec-first.md`: New "Task Granularity" section — vertical slices + PRD quality checklist
+  - Vertical slice definition: thin, end-to-end unit for exactly one user behavior; one agent session = one slice
+  - 6-dimension PRD quality checklist (Problem Clarity, Testable Criteria, Scope Boundaries, Observable Done, Requirements Clarity, Terminology)
+  - Concrete example: over-scoped task vs properly-sized vertical slice
+  - Inspired by Allan Hill (Fractional CTO) — [evaluation](docs/resource-evaluations/2026-02-19-allanhillgeek-decomposition-agentic-dev.md) (3/5)
+
+- `guide/methodologies.md`: Expanded ATDD section with agentic application
+  - Added 3-step agent workflow: Gherkin → failing tests → implementation
+  - Gherkin example for "password reset" feature
+  - Practical note: how to pass Gherkin file to Claude Code as task contract
+
+- `machine-readable/reference.yaml`: 3 new index entries (`spec_task_granularity`, `spec_prd_checklist`, `atdd_with_agents`)
+
+- **Resource evaluation**: Sylvain Chabaud — Spec-to-Code Factory (score 3/5)
+  - Pipeline multi-agents BREAK→MODEL→ACT→DEBRIEF avec 6 gates de validation outillées (Node.js)
+  - Invariants "No Spec No Code" + "No Task No Commit" enforced via hooks — pattern d'enforcement non documenté dans le guide
+  - Budget token transparent par phase (~900K total) — estimation concrète unique dans l'écosystème
+  - Mention ajoutée dans `guide/methodologies.md` (tableau SDD Tools) et `guide/workflows/spec-first.md` (See Also)
+  - Évaluation archivée : `docs/resource-evaluations/sylvain-chabaud-spec-to-code-factory.md`
+
+- **New Section 3.5**: Team Configuration at Scale — Profile-Based Module Assembly pattern
+  - Covers N×M×P fragmentation problem (N devs × M tools × P OS) with modular solution
+  - Architecture: profiles YAML + shared modules + skeleton template + TypeScript assembler script
+  - Measured results: 59% context token reduction (380 → 185 lines avg, 5-dev production team)
+  - CI drift detection via GitHub Actions daily check
+  - 5-step replication guide + trade-offs table (when NOT to use)
+  - Inserted between Section 3.4 (Precedence Rules) and Section 4 (Agents)
+
+- **New workflow**: `guide/workflows/team-ai-instructions.md` — step-by-step setup guide
+  - 6 phases: Audit → Extract Modules → Create Profiles → Assembler Script → CI Integration → Onboarding
+  - Scaling thresholds: 1-2 devs (shared CLAUDE.md) → 3-5 (modules only) → 5+ (full profile assembly)
+  - Troubleshooting table for common issues
+
+- **New templates**: `examples/team-config/` — ready-to-use Profile-Based Assembly templates
+  - `profile-template.yaml`: developer profile with core + conditional modules
+  - `claude-skeleton.md`: CLAUDE.md template with `{{MODULE:*}}` and `{{#if}}` placeholders
+  - `sync-script.ts`: TypeScript assembler with module resolution, conditional blocks, drift detection
+
+- **reference.yaml**: 9 new entries for `team_ai_instructions_*` (section, workflow, templates, pattern, token savings)
+
 ## [3.27.8] - 2026-02-19
 
 ### Added

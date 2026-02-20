@@ -130,6 +130,7 @@ Context full → /compact or /clear
   - [3.2 The .claude/ Folder Structure](#32-the-claude-folder-structure)
   - [3.3 Settings & Permissions](#33-settings--permissions)
   - [3.4 Precedence Rules](#34-precedence-rules)
+  - [3.5 Team Configuration at Scale](#35-team-configuration-at-scale)
 - [4. Agents](#4-agents)
   - [4.1 What Are Agents](#41-what-are-agents)
   - [4.2 Creating Custom Agents](#42-creating-custom-agents)
@@ -4915,6 +4916,262 @@ This enables progressive context loading—rules only appear when Claude works w
 - Patterns use glob syntax (same as `.gitignore`)
 - Multiple rules can match the same file (all are loaded)
 - Rules without `paths:` frontmatter always load
+
+---
+
+## 3.5 Team Configuration at Scale
+
+---
+
+### 📌 Section 3.5 TL;DR (60 seconds)
+
+**Problem**: AI instruction files (CLAUDE.md, .cursorrules, AGENTS.md) fragment across developers, tools, and OS — each dev ends up with a slightly different version, and nobody knows which is "correct."
+
+**Solution**: Profile-Based Module Assembly — extract reusable modules, define per-dev profiles in YAML, auto-assemble the final instruction file.
+
+**Measured gain**: 59% token context reduction (from ~8,400 to ~3,450 tokens per assembled file). Measured on a team of 5 developers, TypeScript/Node.js stack.
+
+**Use when**: Teams of 3+ developers using multiple AI tools (Claude Code, Cursor, Windsurf, etc.)
+
+**Skip if**: Solo developer or homogeneous team (same tool, same OS, same rules for everyone).
+
+---
+
+### The N×M×P Fragmentation Problem
+
+When your team uses AI coding tools, instruction files multiply fast:
+
+```
+Developers (N)  ×  Tools (M)     ×  OS (P)    =  Fragments
+─────────────     ───────────      ─────────     ──────────
+5 devs            3 tools          2 OS          30 potential configs
+                  (Claude Code,    (macOS,
+                   Cursor,          Linux)
+                   Windsurf)
+```
+
+In practice, this causes real drift:
+
+- Alice adds TypeScript strict-mode rules to her CLAUDE.md. Bob never gets them.
+- Carol configures macOS-specific paths. Dave on Linux copies the file and gets broken paths.
+- Someone updates the git workflow section in one file. The other 4 files stay stale.
+
+After 3 months, no two developers have the same instructions — and nobody knows which version is "right."
+
+### Solution: Profile-Based Module Assembly
+
+Instead of maintaining N separate monolithic files, you maintain:
+- **Modules**: Small, single-topic instruction files (reusable across all devs)
+- **Profiles**: One YAML per developer declaring which modules they need
+- **Skeleton**: A template with placeholders, filled at assembly time
+- **Assembler**: A script that reads a profile and outputs the final file
+
+```
+profiles/
+├── alice.yaml      ──┐
+├── bob.yaml        ──┤  Developer Profiles
+└── carol.yaml      ──┘
+        │
+        ▼
+modules/
+├── core-standards.md    ──┐
+├── typescript-rules.md  ──┤  Shared Modules
+├── git-workflow.md      ──┤
+└── macos-paths.md       ──┘
+        │
+        ▼
+skeleton/
+└── claude.md            ─── Template with {{PLACEHOLDERS}}
+        │
+        ▼
+sync-ai-instructions.ts  ─── Assembler script
+        │
+        ▼
+output/
+├── alice/CLAUDE.md      ──┐
+├── bob/CLAUDE.md        ──┤  Assembled per-dev
+└── carol/CLAUDE.md      ──┘
+```
+
+**One module update propagates to all developers automatically.**
+
+### Profile YAML
+
+Each developer has a profile declaring their environment and which modules to include:
+
+```yaml
+# profiles/alice.yaml
+name: "Alice"
+os: "macos"
+tools:
+  - claude-code
+  - cursor
+communication_style: "verbose"  # or "concise"
+modules:
+  core:
+    - core-standards
+    - git-workflow
+    - typescript-rules
+  conditional:
+    - macos-paths        # included if os: macos
+    - cursor-rules       # included if cursor in tools
+preferences:
+  language: "english"
+  token_budget: "medium"  # low | medium | high
+```
+
+### Skeleton Template
+
+The skeleton is a Markdown template with placeholders. The assembler fills them in:
+
+```markdown
+# AI Instructions - {{DEVELOPER_NAME}}
+# Generated: {{GENERATED_DATE}} | OS: {{OS}} | Tool: {{TOOL}}
+# DO NOT EDIT - Auto-generated from profile. Edit profile + modules instead.
+
+## Project Context
+{{MODULE:core-standards}}
+
+## Git Workflow
+{{MODULE:git-workflow}}
+
+{{#if typescript}}
+## TypeScript Rules
+{{MODULE:typescript-rules}}
+{{/if}}
+
+## Environment
+{{MODULE:{{OS}}-paths}}
+```
+
+The `DO NOT EDIT` header is important — it prevents developers from making local changes that would be overwritten on next assembly.
+
+### Assembler Script
+
+A simplified TypeScript assembler (~30 lines of core logic):
+
+```typescript
+// sync-ai-instructions.ts (simplified)
+import { readFileSync, writeFileSync } from 'fs'
+import { parse } from 'yaml'
+
+interface Profile {
+  name: string
+  os: 'macos' | 'linux' | 'windows'
+  tools: string[]
+  modules: { core: string[]; conditional: string[] }
+}
+
+function assembleInstructions(profilePath: string, skeletonPath: string): string {
+  const profile = parse(readFileSync(profilePath, 'utf-8')) as Profile
+  let output = readFileSync(skeletonPath, 'utf-8')
+
+  // Replace placeholders
+  output = output.replace('{{DEVELOPER_NAME}}', profile.name)
+  output = output.replace('{{OS}}', profile.os)
+  output = output.replace('{{GENERATED_DATE}}', new Date().toISOString())
+
+  // Inject modules
+  const allModules = [
+    ...profile.modules.core,
+    ...profile.modules.conditional.filter(m => isApplicable(m, profile))
+  ]
+
+  for (const moduleName of allModules) {
+    const content = readFileSync(`modules/${moduleName}.md`, 'utf-8')
+    output = output.replace(`{{MODULE:${moduleName}}}`, content)
+  }
+
+  return output
+}
+
+function isApplicable(module: string, profile: Profile): boolean {
+  if (module.endsWith('-paths')) return module.startsWith(profile.os)
+  if (module === 'cursor-rules') return profile.tools.includes('cursor')
+  return true
+}
+
+// Run for all profiles
+const profiles = ['alice', 'bob', 'carol']
+for (const dev of profiles) {
+  const result = assembleInstructions(`profiles/${dev}.yaml`, 'skeleton/claude.md')
+  writeFileSync(`output/${dev}/CLAUDE.md`, result)
+  console.log(`Generated CLAUDE.md for ${dev}`)
+}
+```
+
+You can write this in Python or bash too — the logic is the same: read profile, load modules, replace placeholders, write output.
+
+### Measured Results
+
+Tested on a team of 5 developers, TypeScript/Node.js stack (Aristote Method):
+
+| Metric | Monolithic | Profile-Based | Change |
+|--------|-----------|---------------|--------|
+| Average CLAUDE.md size | 380 lines | 185 lines | -51% |
+| Estimated token cost | ~8,400 tok | ~3,450 tok | **-59%** |
+| Files to maintain | 1 shared file | 12 modules + 5 profiles | +16 files |
+| Update propagation | Manual copy-paste | Automatic (1 module → all) | Automated |
+| Drift detection | None | CI daily check | Automated |
+
+Token estimates based on ~22 tokens/line average. The 59% reduction comes from each developer only loading the modules they actually need, instead of the full monolithic file with sections irrelevant to their setup.
+
+### CI Drift Detection
+
+Add a daily check to catch when assembled output diverges from what the profiles would generate:
+
+```yaml
+# .github/workflows/ai-instructions-sync.yml
+name: Check AI Instructions Sync
+on:
+  schedule:
+    - cron: '0 8 * * *'  # Daily at 8am
+  push:
+    paths: ['profiles/**', 'modules/**', 'skeleton/**']
+
+jobs:
+  check-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npx ts-node sync-ai-instructions.ts --dry-run --check
+      - name: Fail if drift detected
+        run: |
+          git diff --exit-code output/ || \
+            (echo "AI instructions out of sync. Run sync-ai-instructions.ts" && exit 1)
+```
+
+This catches two scenarios:
+1. Someone edited a module but forgot to re-run the assembler
+2. Someone manually edited an output file instead of the module
+
+### 5-Step Replication Guide
+
+1. **Audit**: List everything in your current CLAUDE.md. Tag each line as `universal` (applies to everyone), `conditional` (depends on tool/OS/role), or `personal` (one dev only).
+
+2. **Extract**: Move each category into a separate file under `modules/`. One file per topic (e.g., `git-workflow.md`, `typescript-rules.md`, `macos-paths.md`).
+
+3. **Profile**: Create one YAML per developer, listing which modules they need based on their tools, OS, and role.
+
+4. **Script**: Write an assembler that reads profiles, injects modules into the skeleton, and writes output. Start simple — the example above is production-ready for small teams.
+
+5. **CI**: Add a daily GitHub Actions job that re-generates all output and runs `git diff --exit-code` to catch drift.
+
+### When NOT to Use This
+
+This pattern has real overhead. Be honest about whether you need it:
+
+| Situation | Recommendation |
+|-----------|----------------|
+| Solo developer | Not worth it. One CLAUDE.md is fine. |
+| Team of 2-3, same tools | Borderline. Use CLAUDE.md precedence rules instead (Section 3.4). |
+| Team 5+, multi-tool | This pattern pays off. |
+| Rapidly changing instructions | High maintenance cost. Stabilize your rules first, then modularize. |
+| Simple projects (<3 months) | Overkill. Use a shared CLAUDE.md. |
+
+The break-even point is roughly **3+ developers with 2+ different AI tools**. Below that, the file management overhead exceeds the benefits.
+
+> For the full step-by-step implementation workflow, see [Team AI Instructions](workflows/team-ai-instructions.md).
 
 ---
 
@@ -10117,6 +10374,43 @@ Servers can work together:
 4. Playwright → Test the implementation
 ```
 
+### Production Case Study: Multi-System Support Investigator
+
+**Context**: Mergify (CI/CD automation platform) needed to triage support tickets across 5 disconnected systems — a manual 15-minute process per ticket.
+
+**Architecture**: Claude Code as orchestrator + 5 custom MCP servers as system adapters:
+
+```
+Support ticket received
+        │
+        ▼
+┌───────────────┐
+│  Claude Code  │  ← orchestrates, synthesizes, produces report
+└───────┬───────┘
+        │ parallel fan-out
+        ├──────────────────┬──────────────────┬──────────────────┬──────────────────┐
+        ▼                  ▼                  ▼                  ▼                  ▼
+ ┌─────────────┐  ┌─────────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+ │  Datadog    │  │     Sentry      │  │  PostgreSQL  │  │    Linear    │  │    GitHub    │
+ │  (metrics,  │  │  (errors, perf  │  │  (customer   │  │  (tickets,   │  │   (source,   │
+ │   traces)   │  │   regressions)  │  │   data, DB)  │  │   history)   │  │  recent PRs) │
+ └─────────────┘  └─────────────────┘  └──────────────┘  └──────────────┘  └──────────────┘
+```
+
+**Key design decisions:**
+- MCP servers handle auth/credentials — Claude Code sees only clean interfaces
+- Queries execute **in parallel**, not sequentially → majority of the time savings
+- Human investigators review Claude's structured report, not raw data
+- One dedicated repo for all MCP server implementations + system prompt
+
+**Results** (self-reported by Mergify, Nov 2025):
+- Triage time: ~15 min → <5 min (⅔ reduction)
+- First-pass accuracy: 75% (25% still require human follow-up)
+
+**Key takeaway**: This pattern — Claude Code as operational orchestrator with domain-specific MCP adapters — applies to any ops/support team juggling multiple disconnected systems. It's distinct from "Claude Code as dev tool": here Claude runs in a **production workflow**, not an IDE.
+
+> Source: [Mergify blog — "How We Turned Claude Into a Cross-System Support Investigator"](https://mergify.com/blog/how-we-turned-claude-into-a-cross-system-support-investigator) (Julian Maurin, Nov 2025)
+
 ## 8.5 Plugin System
 
 Claude Code includes a comprehensive **plugin system** that allows you to extend functionality through community-created or custom plugins and marketplaces.
@@ -13390,6 +13684,8 @@ You: "Implement the caching layer following the plan"
 
 Note: These are loaded **once at session start**, not per request. A 200-line CLAUDE.md costs ~2K tokens upfront but doesn't grow during the session. The concern is the cumulative effect when combined with multiple `@includes` and all files in `.claude/rules/`.
 
+> **Important**: Beyond file size, context files containing non-essential information (style guides, architecture descriptions, general conventions) add **+20-23% inference cost per session** regardless of line count — because agents process and act on every instruction. ([Gloaguen et al., 2026](https://arxiv.org/abs/2602.11988))
+
 > **See also**: [Memory Loading Comparison](#memory-loading-comparison) for when each method loads.
 
 **1. Keep CLAUDE.md files concise:**
@@ -13405,6 +13701,8 @@ Note: These are loaded **once at session start**, not per request. A 200-line CL
 - Move specialized rules to .claude/rules/ (auto-loaded at session start)
 - Split by concern: team rules in project CLAUDE.md, personal prefs in ~/.claude/CLAUDE.md
 ```
+
+> **Research note** (Gloaguen et al., ETH Zürich, Feb 2026 — 138 benchmarks, 12 repos): The first empirical study on context files shows developer-written CLAUDE.md improves agent success rate by **+4%**, but LLM-generated files reduce it by **-3%**. Cause: agents faithfully follow all instructions, even those irrelevant to the task, leading to broader file exploration and longer reasoning chains. **Recommendation: include only build/test commands and project-specific tooling.** Style guides and architecture descriptions belong in separate docs. ([Full evaluation](../docs/resource-evaluations/agents-md-empirical-study-2602-11988.md))
 
 **2. Use targeted file references:**
 

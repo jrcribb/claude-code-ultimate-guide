@@ -41,6 +41,16 @@ deep_dive:
   rules_code_quality_review: "examples/rules/code-quality-review.md"
   rules_test_review: "examples/rules/test-review.md"
   rules_performance_review: "examples/rules/performance-review.md"
+  # Team Configuration at Scale (Profile-Based Module Assembly)
+  team_ai_instructions_section: "guide/ultimate-guide.md#35-team-configuration-at-scale"
+  team_ai_instructions_workflow: "guide/workflows/team-ai-instructions.md"
+  team_ai_instructions_profile_template: "examples/team-config/profile-template.yaml"
+  team_ai_instructions_skeleton: "examples/team-config/claude-skeleton.md"
+  team_ai_instructions_sync_script: "examples/team-config/sync-script.ts"
+  team_ai_instructions_pattern: "profiles YAML + shared modules + skeleton + assembler script"
+  team_ai_instructions_problem: "N devs × M tools × P OS = fragmented AI instructions"
+  team_ai_instructions_token_savings: "59% context token reduction (measured, 5-dev team)"
+  team_ai_instructions_threshold: "Team 5+ devs with multiple AI tools"
   # Known Issues & Critical Bugs (verified community reports)
   known_issues: "guide/known-issues.md"
   known_issues_github_bug: "guide/known-issues.md:16"  # GitHub auto-creation bug
@@ -716,6 +726,9 @@ deep_dive:
   spec_osmani_source: "https://addyosmani.com/blog/good-spec/"
   spec_osmani_evaluation: "docs/resource-evaluations/addy-osmani-good-spec.md"
   spec_osmani_score: "4/5"
+  spec_task_granularity: "guide/workflows/spec-first.md:62"  # Vertical slices + PRD checklist (Allan Hill, Feb 2026)
+  spec_prd_checklist: "guide/workflows/spec-first.md:70"  # 6-dimension PRD quality checklist
+  atdd_with_agents: "guide/methodologies.md:180"  # ATDD + Gherkin for agentic workflows
   commands_table: 10213
   shortcuts_table: 10246
   troubleshooting: 10372

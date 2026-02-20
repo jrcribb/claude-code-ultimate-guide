@@ -65,6 +65,12 @@ Use existing battle-tested repositories as scaffolding for new projects.
 
 **When to use**: Starting new projects, standardizing team patterns, rapid prototyping from proven foundations
 
+### [Team AI Instructions](./team-ai-instructions.md)
+
+Scale CLAUDE.md across a multi-developer, multi-tool team with profile-based module assembly.
+
+**When to use**: Team 5+ devs, multiple AI tools (Claude Code + Cursor/Windsurf), mixed OS
+
 ---
 
 ## 🎨 Design & Content
@@ -112,6 +118,7 @@ Systematically explore and understand unfamiliar codebases.
 | **UI implementation** | [Design to Code](./design-to-code.md) |
 | **Code quality** | [Iterative Refinement](./iterative-refinement.md) |
 | **New project from template** | [Skeleton Projects](./skeleton-projects.md) |
+| **Team AI instructions** | [Team AI Instructions](./team-ai-instructions.md) |
 | **Documentation** | [PDF Generation](./pdf-generation.md) |
 | **Audio feedback** | [TTS Setup](./tts-setup.md) |
 
@@ -132,4 +139,4 @@ New workflow ideas? Open an issue or PR in the main repository.
 
 ---
 
-**Last updated**: January 2026
+**Last updated**: February 2026

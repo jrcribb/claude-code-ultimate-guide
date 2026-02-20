@@ -16,12 +16,13 @@ Define what you want in CLAUDE.md BEFORE asking Claude to build. One well-struct
 
 1. [TL;DR](#tldr)
 2. [The Pattern](#the-pattern)
-3. [CLAUDE.md Spec Templates](#claudemd-spec-templates)
-4. [Step-by-Step Workflow](#step-by-step-workflow)
-5. [Integration with Tools](#integration-with-tools)
-6. [When to Use](#when-to-use)
-7. [Anti-Patterns](#anti-patterns)
-8. [See Also](#see-also)
+3. [Task Granularity: Sizing Work for Agents](#task-granularity-sizing-work-for-agents)
+4. [CLAUDE.md Spec Templates](#claudemd-spec-templates)
+5. [Step-by-Step Workflow](#step-by-step-workflow)
+6. [Integration with Tools](#integration-with-tools)
+7. [When to Use](#when-to-use)
+8. [Anti-Patterns](#anti-patterns)
+9. [See Also](#see-also)
 
 ---
 
@@ -55,6 +56,41 @@ The spec becomes the source of truth that:
 - Constrains what Claude builds
 - Documents decisions for the team
 - Enables verification of completeness
+
+---
+
+## Task Granularity: Sizing Work for Agents
+
+Before writing the spec, verify the task is the right size. Agents work best with **vertical slices** — thin, end-to-end units that cut through all layers but implement exactly one complete user behavior (e.g. "password reset via email", not "authentication system").
+
+**Rule of thumb**: One agent session = one vertical slice. If the task description requires "and" between two user behaviors, split it.
+
+### PRD Quality Checklist
+
+Run this before handing any task to an agent. Six dimensions to verify:
+
+| Dimension | Question to ask | Red flag |
+|-----------|----------------|----------|
+| **Problem Clarity** | Is the problem statement unambiguous? | "Improve performance" |
+| **Testable Criteria** | Can completion be verified automatically? | "Works well" |
+| **Scope Boundaries** | What is explicitly OUT of scope? | Nothing listed as excluded |
+| **Observable Done** | What does "done" look like to a user? | Internal-only description |
+| **Requirements Clarity** | No implementation details in the spec? | "Use Redis for caching" |
+| **Terminology** | Same terms used throughout? | "user" and "account" mixed |
+
+A task that fails 2+ dimensions needs rework before an agent touches it. The spec review catches ambiguity that will otherwise surface as incorrect implementation mid-session.
+
+```
+❌ Too big, ambiguous:
+"Add user authentication to the app"
+
+✅ One vertical slice:
+"Users can log in with email + password.
+- POST /auth/login returns JWT on success, 401 on failure
+- Invalid credentials show 'Email or password incorrect' (not which is wrong)
+- Session expires after 24h
+- Out of scope: OAuth, password reset, remember me"
+```
 
 ---
 
@@ -828,3 +864,4 @@ Claude: Reads CLAUDE.md + @CLAUDE-api.md (relevant context only)
 - [Spec Kit Documentation](https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/)
 - [OpenSpec Documentation](https://github.com/Fission-AI/OpenSpec)
 - [tdd-with-claude.md](./tdd-with-claude.md) — Combine with TDD
+- [Spec-to-Code Factory](https://github.com/SylvainChabaud/spec-to-code-factory) — Implémentation référence complète avec enforcement outillé (6 gates via Node.js, invariants "No Spec No Code" + "No Task No Commit", ~900K tokens/projet)

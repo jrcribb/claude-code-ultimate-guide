@@ -179,6 +179,25 @@ Feature: Order Management
 
 **ATDD (Acceptance Test-Driven Development)** — Acceptance criteria defined BEFORE coding, collaboratively ("Three Amigos": Business, Dev, Test).
 
+In agentic development, ATDD is particularly effective because agents need unambiguous success conditions. The flow maps cleanly to agent tasks:
+
+1. **Define acceptance criteria** in Gherkin (human-readable, machine-executable)
+2. **Agent writes failing tests** based on scenarios (not implementation)
+3. **Agent implements** until tests pass
+
+```gherkin
+Feature: Password Reset
+  Scenario: User resets via email
+    Given a registered user with email "user@example.com"
+    When they request a password reset
+    Then they receive a reset email within 60 seconds
+    And the reset link expires after 24 hours
+```
+
+This Gherkin scenario is the contract between intent and implementation. The agent cannot misinterpret scope because done is defined before a line of code is written.
+
+> **Applied to agents**: Pass the Gherkin file to Claude Code before implementing. "Write failing tests for this feature file, then implement until they pass." The scenario writer role (human or agent) forces explicit scope before execution starts.
+
 **CDD (Contract-Driven Development)** — API contracts (OpenAPI specs) as executable interface between teams. Patterns: Contract as Test, Contract as Stub.
 
 ---
@@ -362,6 +381,7 @@ Three tools have emerged to formalize Spec-Driven Development:
 | **Spec Kit** | Greenfield, governance | [github.blog/spec-kit](https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/) | `/speckit.constitution`, `/speckit.specify`, `/speckit.plan` |
 | **OpenSpec** | Brownfield, changes | [github.com/Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec) | `/openspec:proposal`, `/openspec:apply`, `/openspec:archive` |
 | **Specmatic** | API contract testing | [specmatic.io](https://specmatic.io) | MCP agent available |
+| **Spec-to-Code Factory** | Greenfield, enforcement outillé | [github.com/SylvainChabaud/spec-to-code-factory](https://github.com/SylvainChabaud/spec-to-code-factory) | Implémentation référence multi-agents (BREAK→MODEL→ACT→DEBRIEF) |
 
 ### Spec Kit (Greenfield)
 
