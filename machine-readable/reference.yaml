@@ -345,6 +345,11 @@ deep_dive:
   # Model Selection & Thinking Guide (Section 2.5) - Added 2026-02-21
   model_selection_guide: 2634  # Section 2.5 — canonical table, effort levels, agent patterns
   model_selection_anchor: "#25-model-selection--thinking-guide"
+  # Configuration Decision Guide (Section 2.7) - Added 2026-02-22
+  configuration_decision_guide: 2872  # Section 2.7 — mechanism comparison, decision tree, 56% warning
+  configuration_decision_guide_anchor: "#27-configuration-decision-guide"
+  mechanism_comparison_table: 2885  # Semantic roles + mechanism comparison tables
+  fifty_six_percent_warning: 2920  # Skills reliability warning + safe patterns
   planner_agent: "examples/agents/planner.md"
   implementer_agent: "examples/agents/implementer.md"
   architecture_reviewer_agent: "examples/agents/architecture-reviewer.md"
@@ -573,7 +578,7 @@ deep_dive:
   hooks: 5273
   hook_templates: 5418
   security_hooks: 5680
-  security_gate_hook: 6907
+  security_gate_hook_line: 6907
   security_gate_hook_source: "https://paddo.dev/blog/claude-code-team-tips/"
   mcp_servers: 5984
   serena_indexation: 6078
