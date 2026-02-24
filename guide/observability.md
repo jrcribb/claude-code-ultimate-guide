@@ -533,7 +533,7 @@ Beyond the hook-based approach above, the community has built purpose-specific t
 | **ccusage** | CLI / TUI | Cost tracking from JSONL — the de-facto reference for pricing data. ~10K GitHub stars. | `npm i -g ccusage` |
 | **claude-code-otel** | OpenTelemetry exporter | Emits spans to any OTEL collector. Integrates with Prometheus + Grafana dashboards. Enterprise-focused. | `npm i -g claude-code-otel` |
 | **Akto** | SaaS / self-hosted | API security guardrails + audit trail. Intercepts at the API level, flags policy violations. | [akto.io](https://akto.io) |
-| **MLflow Tracing** | SDK integration | Structured traces (tool usage, latency, inputs/outputs). Requires wrapping calls in Python. | `pip install mlflow` |
+| **MLflow Tracing** | CLI + SDK | Exact token counts, tool spans, LLM-as-judge evaluation. CLI mode: zero Python required. Best for ML/MLOps teams. | `pip install mlflow` → [see section below](#mlflow-tracing) |
 | **ccboard** | TUI + Web | Unified dashboard for sessions, costs, stats. Activity/audit tab in development. | `cargo install ccboard` |
 
 ### Decision Guide
@@ -541,7 +541,8 @@ Beyond the hook-based approach above, the community has built purpose-specific t
 ```
 Want cost numbers fast?          → ccusage (CLI, 0 config)
 Need enterprise audit trail?     → claude-code-otel + Grafana or Akto
-Already using MLflow for ML?     → MLflow tracing integration
+Already using MLflow for ML?     → MLflow tracing integration (see below)
+Need agent regression detection? → MLflow tracing + LLM-as-judge
 Want a persistent TUI/Web UI?    → ccboard
 ```
 
@@ -575,6 +576,123 @@ ccboard --web        # Launch Web UI (localhost:3000)
 ```
 
 Source: [github.com/FlorianBruniaux/ccboard](https://github.com/FlorianBruniaux/ccboard). An Activity tab covering file access, bash commands, and network calls is planned (see `docs/resource-evaluations/ccboard-activity-module-plan.md`).
+
+### MLflow Tracing
+
+**When to use**: Teams already in the MLflow/MLOps ecosystem, or anyone needing exact token counts + LLM-based quality evaluation. Not the right fit for solo devs wanting quick cost numbers (use ccusage instead).
+
+**What makes it different from the other tools**: MLflow intercepts at the API level, not post-hoc from JSONL. It captures **exact** token counts (vs the ~15-25% variance of hook-based estimation) and enables **LLM-as-judge** regression detection — not just "what happened" but "was it good?".
+
+#### Setup: CLI mode (no Python required)
+
+Works with interactive `claude` sessions. Hooks into `.claude/settings.json`:
+
+```bash
+pip install "mlflow[genai]>=3.4"
+
+# Enable tracing in current project directory
+mlflow autolog claude
+
+# With custom backend (recommended for persistence)
+mlflow autolog claude -u sqlite:///mlflow.db
+
+# With named experiment
+mlflow autolog claude -n "my-project"
+
+# Check status / disable
+mlflow autolog claude --status
+mlflow autolog claude --disable
+```
+
+Launch the UI to inspect traces:
+
+```bash
+mlflow server  # → http://localhost:5000
+```
+
+**What gets captured automatically**: user prompts, assistant responses, tool calls (name + inputs + outputs), token counts (exact), latency per call, session metadata.
+
+#### Setup: SDK mode (Python agents)
+
+```python
+import mlflow
+mlflow.anthropic.autolog()         # one line, before anything else
+mlflow.set_experiment("my-agent")
+
+# Use ClaudeSDKClient normally — all interactions are traced
+# ⚠️ Only ClaudeSDKClient is supported. Direct API calls are not traced.
+from anthropic import claude_agent_sdk
+async with ClaudeSDKClient(options=AGENT_OPTIONS) as client:
+    await client.query(query)
+```
+
+Requires: `mlflow>=3.5` + `claude-agent-sdk>=0.1.0`.
+
+#### MCP server: bidirectional integration
+
+Claude Code can query its own traces directly. Add to `.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "mlflow-mcp": {
+      "command": "uv",
+      "args": ["run", "--with", "mlflow[mcp]>=3.5.1", "mlflow", "mcp", "run"],
+      "env": { "MLFLOW_TRACKING_URI": "<your-tracking-uri>" }
+    }
+  }
+}
+```
+
+Once configured, you can ask Claude Code: *"Find all sessions where the backend-architect agent used more than 20 tool calls"* — it queries MLflow directly without copy-pasting IDs.
+
+#### LLM-as-judge: agent regression detection
+
+The key capability absent from all other tools in this section. After modifying an agent's instructions, measure whether quality improved or degraded:
+
+```python
+from mlflow.genai.scorers import scorer, ConversationCompleteness, RelevanceToQuery
+from mlflow.entities.model_registry import Feedback
+
+@scorer
+def tool_efficiency(trace) -> int:
+    """Count tool calls — lower is better for well-scoped tasks."""
+    return len(trace.search_spans(span_type="TOOL"))
+
+@scorer
+def permission_blocks(trace) -> int:
+    """Detect how often the agent was blocked by permission gates."""
+    return sum(
+        1 for span in trace.search_spans(span_type="TOOL")
+        if span.outputs and "requires approval" in str(span.outputs).lower()
+    )
+
+# Run evaluation against recorded traces
+traces = mlflow.search_traces(experiment_ids=["<id>"], max_results=50)
+results = mlflow.genai.evaluate(
+    data=traces,
+    scorers=[
+        tool_efficiency,
+        permission_blocks,
+        ConversationCompleteness(),
+        RelevanceToQuery(),
+    ]
+)
+```
+
+**Built-in scorers**: `ConversationCompleteness`, `RelevanceToQuery`, `UserFrustration`, `SafetyScorer`.
+
+**Custom scorers**: full access to the trace object (all spans, inputs, outputs, token counts).
+
+#### Limitations
+
+| Limitation | Detail |
+|------------|--------|
+| **CLI mode audience** | Best for interactive sessions; SDK mode required for programmatic agents |
+| **SDK restriction** | Only `ClaudeSDKClient` — direct API calls bypass tracing |
+| **PII risk** | Traces capture full conversation content. Redact before storing if working with sensitive data |
+| **Production backend** | SQLite = dev only. Use PostgreSQL/MySQL for production |
+| **OpenTelemetry** | MLflow 3.6+ exports to any OTEL-compatible backend (Datadog, Grafana, etc.) |
 
 ---
 

@@ -16,7 +16,7 @@ tags: [guide, reference, workflows, agents, hooks, mcp, security]
 
 **Last updated**: January 2026
 
-**Version**: 3.28.1
+**Version**: 3.29.0
 
 ---
 
@@ -184,6 +184,8 @@ Context full → /compact or /clear
   - [9.17 Scaling Patterns: Multi-Instance Workflows](#917-scaling-patterns-multi-instance-workflows)
   - [9.18 Codebase Design for Agent Productivity](#918-codebase-design-for-agent-productivity)
   - [9.19 Permutation Frameworks](#919-permutation-frameworks)
+  - [9.20 Agent Teams (Multi-Agent Coordination)](#920-agent-teams-multi-agent-coordination)
+  - [9.21 Legacy Codebase Modernization](#921-legacy-codebase-modernization)
 - [10. Reference](#10-reference)
   - [10.1 Commands Table](#101-commands-table)
   - [10.2 Keyboard Shortcuts](#102-keyboard-shortcuts)
@@ -690,6 +692,20 @@ Claude Code allows you to **continue previous conversations** across terminal se
    # Short form
    claude -r abc123def
    ```
+
+3. **Link to a GitHub PR** (`--from-pr <number>`, v2.1.49+):
+   ```bash
+   # Start a session linked to a specific PR
+   claude --from-pr 123
+
+   # Sessions created via gh pr create during a Claude session
+   # are auto-linked to that PR — use --from-pr to resume them
+   gh pr create --title "Add auth" --body "..."
+   # Later:
+   claude --from-pr 123  # Resumes the session context for this PR
+   ```
+
+   Useful for continuing work on a feature exactly where you left off relative to a specific PR — no need to remember session IDs.
 
 **Finding session IDs**:
 
@@ -2506,6 +2522,14 @@ User: Implement the plan from round 3.
 ```
 
 **Why it works**: Each round forces Claude to reconsider assumptions. Round 2 typically catches 30-40% of issues that round 1 missed. Round 3 synthesizes into a more robust plan.
+
+> **📊 Empirical backing — Anthropic AI Fluency Index (Feb 2026)**
+>
+> An Anthropic study analyzing 9,830 Claude conversations quantifies exactly why plan review works: users who iterate and **question the AI's reasoning are 5.6× more likely to catch missing context** and errors compared to users who accept the first output. A second round of review makes you 4× more likely to identify what was left out.
+>
+> The Rev the Engine pattern operationalizes this finding: each round of deep challenge triggers the questioning behavior that produces measurably better plans.
+>
+> *Source: Swanson et al., "The AI Fluency Index", Anthropic (2026-02-23) — [anthropic.com/research/AI-fluency-index](https://www.anthropic.com/research/AI-fluency-index)*
 
 ### Mechanic Stacking
 
@@ -4366,6 +4390,14 @@ Personal overrides not committed to git (add to .gitignore):
 | Update when conventions change | Let it go stale |
 | Reference external docs | Duplicate documentation |
 
+> **📊 Empirical backing — Anthropic AI Fluency Index (Feb 2026)**
+>
+> Only **30% of Claude users explicitly define collaboration terms** before starting a session. Users who do — the 30% — produce measurably more directed and effective interactions. A well-configured CLAUDE.md is the structural equivalent of that 30%: it sets expectations, scope, and constraints once, so every session starts with the right context already loaded.
+>
+> The 70% who skip this step negotiate scope implicitly, per request — a less efficient and less reliable pattern.
+>
+> *Source: Swanson et al., "The AI Fluency Index", Anthropic (2026-02-23) — [anthropic.com/research/AI-fluency-index](https://www.anthropic.com/research/AI-fluency-index)*
+
 > **Advanced patterns**: For agent-optimized codebase design including domain knowledge embedding, code discoverability, and testing strategies, see [Section 9.18: Codebase Design for Agent Productivity](#918-codebase-design-for-agent-productivity).
 
 ### Security Warning: CLAUDE.md Injection
@@ -4583,7 +4615,7 @@ The `.claude/` folder is your project's Claude Code directory for memory, settin
 | Personal preferences | `CLAUDE.md` | ❌ Gitignore |
 | Personal permissions | `settings.local.json` | ❌ Gitignore |
 
-### 3.28.1 Version Control & Backup
+### 3.29.0 Version Control & Backup
 
 **Problem**: Without version control, losing your Claude Code configuration means hours of manual reconfiguration across agents, skills, hooks, and MCP servers.
 
@@ -5732,13 +5764,15 @@ Run `npm test` and report results. Flag failures with file + line number.
 **Managing background agents:**
 
 ```bash
-# List running agents
+# List running agents + kill overlay
 ctrl+f    # Opens agent manager overlay
 
-# Kill all background agents (double-press within 3s)
-ctrl+c ctrl+c
-# or
-ESC ESC
+# Kill ALL background agents at once (v2.1.47+)
+ctrl+f    # Use the overlay to kill selected or all agents
+
+# Cancel main thread only (background agents keep running)
+ESC
+ctrl+c
 ```
 
 ### `claude agents` CLI (v2.1.50+)
@@ -7020,6 +7054,115 @@ Default: **Disabled** (opt-in for safety)
 - **Video Tutorial**: [YouTube walkthrough](https://www.youtube.com/watch?v=...) (check repo for latest)
 - **Academic Foundation**: [Anthropic Memory Cookbook](https://github.com/anthropics/anthropic-cookbook/blob/main/skills/memory/guide.md)
 
+### Design Intelligence: UI UX Pro Max
+
+**Repository**: [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
+**Site**: [ui-ux-pro-max-skill.nextlevelbuilder.io](https://ui-ux-pro-max-skill.nextlevelbuilder.io/) | [uupm.cc](https://uupm.cc)
+**Stars**: 33.7k | **Forks**: 3.3k | **License**: MIT | **Latest**: v2.2.1 (Jan 2026)
+
+UI UX Pro Max is the most popular design skill in the AI coding assistant ecosystem. It adds a **design reasoning engine** to Claude Code (and 14 other assistants), replacing generic AI-generated UI with professional, industry-aware design systems.
+
+The engine works offline — it runs BM25 search over ~400 local JSON rules to recommend styles, palettes, and typography. No external LLM calls, no network dependency at runtime.
+
+#### What It Provides
+
+| Asset | Count | Examples |
+|-------|-------|---------|
+| UI Styles | 67 | Glassmorphism, Brutalism, Bento Grid, AI-Native UI, Claymorphism… |
+| Color Palettes | 96 | Industry-specific: SaaS, fintech, healthcare, e-commerce, luxury… |
+| Font Pairings | 57 | Curated Google Fonts combinations with context rules |
+| Chart Types | 25 | Dashboard, analytics, BI recommendations |
+| UX Guidelines | 99 | Best practices, anti-patterns, accessibility rules |
+| Industry Reasoning Rules | 100 | SaaS, fintech, healthcare, e-commerce, beauty, Web3, gaming… |
+
+#### Flagship Feature: Design System Generator
+
+The Design System Generator (v2.0+) analyzes your product type and generates a complete, tailored design system in seconds:
+
+```bash
+# Generate design system for a SaaS dashboard project
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py "saas analytics dashboard" \
+  --design-system -p "MyApp"
+
+# Output: pattern + style + palette + typography + effects + anti-patterns + checklist
+```
+
+**Master + Override pattern** for multi-page projects:
+
+```bash
+# Generate and persist a global design system
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py "saas dashboard" \
+  --design-system --persist -p "MyApp"
+
+# Create page-specific overrides
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py "checkout flow" \
+  --design-system --persist -p "MyApp" --page "checkout"
+```
+
+This creates a `design-system/` folder:
+```
+design-system/
+├── MASTER.md          # Global: colors, typography, spacing, components
+└── pages/
+    └── checkout.md    # Page-specific overrides only
+```
+
+Reference in your Claude Code prompts:
+```
+I am building the Checkout page.
+Read design-system/MASTER.md, then check design-system/pages/checkout.md.
+Prioritize page rules if present, otherwise use Master rules.
+Now generate the code.
+```
+
+#### Installation
+
+**Option 1 — Claude Marketplace** (two commands):
+```
+/plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill
+/plugin install ui-ux-pro-max@ui-ux-pro-max-skill
+```
+
+**Option 2 — CLI** (recommended):
+```bash
+npm install -g uipro-cli
+cd /path/to/your/project
+uipro init --ai claude   # Claude Code
+```
+
+**Option 3 — Manual** (no npm):
+```bash
+git clone --depth=1 https://github.com/nextlevelbuilder/ui-ux-pro-max-skill /tmp/uipro
+cp -r /tmp/uipro/.claude/skills/ui-ux-pro-max .claude/skills/
+```
+
+**Prerequisite**: Python 3.x must be installed (the reasoning engine is a Python script).
+
+#### Usage
+
+Once installed, the skill activates automatically for UI/UX requests in Claude Code:
+
+```
+Build a landing page for my SaaS product
+Create a dashboard for healthcare analytics
+Design a fintech app with dark theme
+```
+
+#### Considerations
+
+| Aspect | Notes |
+|--------|-------|
+| **Scope** | Multi-platform — supports Cursor, Windsurf, Copilot, Gemini CLI, and 10 others alongside Claude Code |
+| **Quality signal** | 33.7k stars, 3.3k forks in 3 months — strongest community traction of any design skill |
+| **Maintenance** | Active — v2.0→v2.2.1 in 10 days (Jan 2026), updated regularly |
+| **Chinese community** | Strong adoption: listed on [jimmysong.io](https://jimmysong.io/ai/ui-ux-pro-max-skill/), benchmark repos in Chinese dev ecosystem |
+
+> **Security note**: `npm install -g uipro-cli` installs a package from an anonymous organization ("nextlevelbuilder") globally. Source audit (Feb 2026) confirmed:
+> - **No preinstall/postinstall scripts** in the npm package
+> - **No network calls** in the Python engine (`search.py`, `core.py`, `design_system.py` — stdlib + local CSV/JSON only)
+>
+> Option 3 (manual git clone) remains the safest route if you want to inspect before installing. The package has not been formally audited by Anthropic or the maintainers of this guide.
+
 ### DevOps & SRE Guide
 
 For comprehensive DevOps/SRE workflows, see **[DevOps & SRE Guide](./devops-sre.md)**:
@@ -7743,6 +7886,17 @@ Hooks are scripts that run automatically when specific events occur.
 | `SubagentStop` | Sub-agent completes | Subagent cleanup |
 | `TeammateIdle` | Agent team member goes idle | Team coordination (v2.1.32+) |
 | `TaskCompleted` | Task marked as completed | Workflow triggers (v2.1.32+) |
+| `WorktreeCreate` | Agent worktree created | Set up DB branch, install deps (v2.1.50+) |
+| `WorktreeRemove` | Agent worktree torn down | Clean up DB branch, temp credentials (v2.1.50+) |
+| `ConfigChange` | Config file changes during session | Enterprise audit, block unauthorized changes (v2.1.49+) |
+
+> **`Stop` and `SubagentStop` — `last_assistant_message` field (v2.1.47+)**: These events now include a `last_assistant_message` field in their JSON input, giving direct access to Claude's final response without parsing transcript files. Useful for orchestration pipelines that need to inspect or log the last output.
+>
+> ```bash
+> # In your Stop hook script
+> LAST_MSG=$(cat | jq -r '.last_assistant_message // ""')
+> echo "$LAST_MSG" >> ~/.claude/logs/session-outputs.log
+> ```
 
 ### Event Flow
 
@@ -10895,6 +11049,32 @@ claude --plugin-dir ~/work/plugins --plugin-dir ~/personal/plugins
 
 This is useful for testing plugins before permanent installation.
 
+### Repo-Level Plugin Policy via `--add-dir` (v2.1.45+)
+
+Define plugin policies at repository or shared-config level using `--add-dir`:
+
+```bash
+# Load plugin configuration from a shared directory
+claude --add-dir /path/to/shared-config
+```
+
+The directory's `settings.json` can specify:
+- `enabledPlugins`: list of pre-enabled plugins for every session
+- `extraKnownMarketplaces`: additional marketplace registries to recognize
+
+**Example shared config `settings.json`:**
+
+```json
+{
+  "enabledPlugins": ["security-audit", "code-review"],
+  "extraKnownMarketplaces": [
+    "https://github.com/myorg/internal-plugins"
+  ]
+}
+```
+
+**Team use case**: Commit a shared config directory to your repo and all team members automatically get the same enabled plugins and approved marketplaces — no per-user configuration needed.
+
 ### When to Use Plugins
 
 | Scenario | Use Plugins |
@@ -10927,6 +11107,19 @@ my-plugin/
 ├── .lsp.json             # LSP server configurations (optional)
 └── README.md             # Documentation
 ```
+
+**LSP server configuration (`.lsp.json`)** — supports `startupTimeout` (v2.1.50+) to control how long Claude waits for a server to initialize before treating it as unresponsive:
+
+```json
+{
+  "servers": {
+    "tsserver": { "startupTimeout": 15000 },
+    "pylsp":    { "startupTimeout": 10000 }
+  }
+}
+```
+
+Useful in slow environments (CI, Docker, cold start) where default timeouts cause LSP features to be silently skipped.
 
 > ⚠️ **Common mistake**: Don't put `commands/`, `agents/`, `skills/`, or `hooks/` inside `.claude-plugin/`. Only `plugin.json` goes there.
 
@@ -13184,10 +13377,34 @@ exit 0  # Allow
 - Be specific and goal-oriented in prompts using WHAT/WHERE/HOW/VERIFY format
 - Monitor via logs or OpenTelemetry when appropriate
 - Test automation in dev/staging environments first
-- Always review agent outputs before accepting
+- Always review agent outputs before accepting — especially polished ones (see Artifact Paradox below)
 - Use git branches for experimental changes
 - Break complex tasks into focused sessions
 - Commit frequently with descriptive messages
+
+> **⚠️ The Artifact Paradox — Anthropic AI Fluency Index (Feb 2026)**
+>
+> Anthropic research on 9,830 Claude conversations reveals a critical counter-intuitive finding: **when Claude produces a polished artifact (code, files, configs), users become measurably less critical**, not more.
+>
+> Compared to sessions without artifact production:
+> - **−5.2pp** likelihood of identifying missing context
+> - **−3.7pp** likelihood of fact-checking the output
+> - **−3.1pp** likelihood of questioning the reasoning
+>
+> Users *do* become more directive (+14.7pp clarifying goals, +14.5pp specifying format) — but their **critical evaluation drops precisely when the output looks finished**.
+>
+> **For Claude Code, this is the nominal case.** Every generated file, every written test, every created config is an artifact. The polished compile-and-run output is exactly when you should apply the most scrutiny — not the least.
+>
+> **Counter-measures:**
+> - Run tests *before* accepting generated code, not after
+> - Explicitly ask: "What edge cases or requirements did you not address?"
+> - Use the [`output-validator` hook](../examples/hooks/bash/output-validator.sh) for automated checks
+> - Apply the VERIFY step of the WHAT/WHERE/HOW/VERIFY format even when output looks complete
+> - In Plan Mode: challenge the plan *before* executing, not after seeing the result
+>
+> *Source: Swanson et al., "The AI Fluency Index", Anthropic (2026-02-23) — [anthropic.com/research/AI-fluency-index](https://www.anthropic.com/research/AI-fluency-index)*
+>
+> 📊 Visual: [AI Fluency — High vs Low Fluency Paths](../guide/diagrams/06-development-workflows.md#ai-fluency--high-vs-low-fluency-paths)
 
 **Effective Prompt Format:**
 
@@ -13998,6 +14215,42 @@ Two new hook events fire around agent worktree lifecycle:
 ```
 
 Typical `worktree-setup.sh`: create a Neon/PlanetScale DB branch, copy `.env.local`, run `npm install`.
+
+#### Enterprise config auditing with ConfigChange (v2.1.49+)
+
+The `ConfigChange` hook fires whenever a configuration file changes during a session. Use it to audit or block unauthorized live configuration modifications — particularly useful in enterprise environments with managed policy hooks.
+
+```json
+// .claude/settings.json
+{
+  "hooks": {
+    "ConfigChange": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "scripts/audit-config-change.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Example `audit-config-change.sh` (log + optionally block):
+
+```bash
+#!/bin/bash
+# Receives JSON on stdin with changed config path
+CONFIG=$(cat | jq -r '.config_path // "unknown"')
+echo "[ConfigChange] $(date -u +%Y-%m-%dT%H:%M:%SZ) $CONFIG" >> ~/.claude/logs/config-audit.log
+# Exit 2 to block the change, exit 0 to allow it
+exit 0
+```
+
+> **Enterprise note**: `disableAllHooks` (v2.1.49+) can no longer bypass *managed* hooks — hooks set via organizational policy always run regardless of this setting. Only non-managed hooks are affected.
 
 ### Database Branch Isolation with Worktrees
 
@@ -18334,6 +18587,140 @@ This section is a quick overview. For complete guide:
 
 ---
 
+## 9.21 Legacy Codebase Modernization
+
+> **Context**: In February 2026, Anthropic published a [COBOL modernization playbook](https://claude.com/blog/how-ai-helps-break-cost-barrier-cobol-modernization) positioning Claude Code as a direct replacement for legacy consulting teams. The same day, IBM stock dropped -13% (its worst single-day performance since October 2000). The workflow described is validated by independent research — it applies to any large legacy codebase (COBOL, Fortran, VB6, PL/I), not just COBOL.
+
+### Why Legacy Modernization Is Hard
+
+The real cost isn't the migration itself — it's the **discovery phase**. Original developers have retired. Documentation is absent or wrong. Code has been patched for decades by engineers who never understood the full system. Finding what talks to what requires consultants billing by the hour.
+
+AI changes the economics by automating this exact phase.
+
+**COBOL context** (for scale reference):
+- ~220 billion lines of COBOL still in production (IBM estimate)
+- ~95% of US ATM transactions run on COBOL-based systems (Reuters/industry consensus — methodology varies by source)
+- Modernization previously required multi-year, multi-team projects
+
+### The 4-Step Workflow
+
+**Independent validation**: Academic research (WJAETS 2025) shows -25 to -30% timeline reduction on average. Best-case: Airbnb migrated 3,500 test files in 6 weeks vs. an estimated 1.5 years. COBOL→Java accuracy: 93% in controlled studies (arXiv, April 2025).
+
+---
+
+**Step 1 — Automated Exploration & Discovery**
+
+```
+Map the entire codebase:
+- Identify all program entry points and execution paths
+- Trace subroutine calls across hundreds of files
+- Document implicit dependencies via shared files, databases, and global state
+- Generate a dependency graph before touching a single line
+```
+
+> Prompt pattern:
+> ```
+> "Read the entire [COBOL/legacy] codebase. Map its structure:
+>  entry points, execution paths, subroutine call chains,
+>  and any implicit dependencies via shared data structures,
+>  global variables, or file I/O. Output a dependency map."
+> ```
+
+---
+
+**Step 2 — Risk Analysis & Opportunity Mapping**
+
+```
+With the dependency map in hand:
+- Assess coupling levels between modules (high coupling = high risk)
+- Surface isolated components as safe modernization candidates
+- Identify duplicated logic and dead code
+- Flag shared state as the highest-risk zones
+```
+
+> Prompt pattern:
+> ```
+> "Based on the dependency map: rank modules by coupling level.
+>  Which components can be modernized in isolation?
+>  Which share state with 3+ other modules and should be touched last?"
+> ```
+
+---
+
+**Step 3 — Strategic Planning**
+
+```
+Human + AI collaboration:
+- AI suggests prioritization based on risk/dependency analysis
+- Team reviews against business priorities (what breaks = most expensive)
+- Define target architecture and code standards
+- Design function-level tests for validation before migration begins
+```
+
+> This phase is **not fully automatable** — business context requires human judgment.
+> Hybrid human-AI workflows show 31% higher completion rates within initial time estimates
+> vs. purely automated approaches (WJAETS 2025).
+
+---
+
+**Step 4 — Incremental Implementation**
+
+```
+Never migrate the whole system at once:
+- Translate logic component by component
+- Create API wrappers for legacy components still in use
+- Run old and new code side-by-side in production
+- Validate each component independently before proceeding to the next
+```
+
+> Prompt pattern:
+> ```
+> "Translate [module X] to [target language].
+>  Preserve exact business logic — no optimization yet.
+>  Add a compatibility wrapper so both versions can run in parallel.
+>  Write tests that verify identical outputs for identical inputs."
+> ```
+
+---
+
+### Key Principles
+
+| Principle | Why it matters |
+|-----------|----------------|
+| **Map before touching** | Blind migrations fail; discovery first |
+| **Isolate before migrating** | High-coupling modules = cascade failures |
+| **Parallel run** | Rollback possible only if both versions coexist |
+| **Test at boundary** | Test inputs/outputs, not internal logic (which will change) |
+| **Human review on business logic** | AI doesn't know which edge case is regulatory vs. dead code |
+
+### Realistic Expectations
+
+"Years to quarters" is real — but it's the **optimistic scenario**, not the average:
+
+| Scenario | Timeline reduction | Source |
+|----------|-------------------|--------|
+| Conservative estimate | -25 to -30% | WJAETS 2025 academic review |
+| Automation-heavy phases | -40 to -50% | Fullstack Labs industry synthesis |
+| Best-case (test migration) | -88% (6 weeks vs 1.5 yr) | Airbnb case study |
+| COBOL→Java conversion accuracy | 93% | arXiv, April 2025 |
+
+The average gains are real and significant. The headline numbers require favorable conditions: good test coverage, isolated modules, and a team that understands both the legacy system and the target stack.
+
+### Anti-Patterns
+
+- **❌ Big bang migration** — Rewriting everything at once. No company has survived this at scale.
+- **❌ No parallel run** — Cutting over without a fallback. One undiscovered edge case = production outage.
+- **❌ Skipping discovery** — Starting to translate before mapping. You will break things you didn't know existed.
+- **❌ Trusting AI on business logic** — AI translates faithfully what it reads. If the original was wrong or context-dependent, the translation will be too.
+
+### Resources
+
+- [Anthropic COBOL Modernization Playbook](https://claude.com/blog/how-ai-helps-break-cost-barrier-cobol-modernization) (Feb 2026)
+- [AI-Driven Legacy Systems Modernization: COBOL to Java](https://arxiv.org/abs/2504.11335) (arXiv, April 2025)
+- [AWS EKS COBOL Modernization Case Study](https://aws.amazon.com/blogs/apn/modernize-cobol-workloads-with-amazon-eks-powered-by-generative-ai/) (July 2025)
+
+---
+
 ## 🎯 Section 9 Recap: Pattern Mastery Checklist
 
 Before moving to Section 10 (Reference), verify you understand:
@@ -18367,6 +18754,7 @@ Before moving to Section 10 (Reference), verify you understand:
 - [ ] **Multi-Instance Scaling**: Understand when/how to orchestrate parallel Claude instances (advanced teams only)
 - [ ] **Agent Teams**: Multi-agent coordination for read-heavy tasks (experimental, Opus 4.6+)
 - [ ] **Permutation Frameworks**: Systematically test multiple approaches before committing
+- [ ] **Legacy Modernization**: 4-step workflow (Discovery → Risk → Planning → Incremental) for large legacy codebases
 
 ### What's Next?
 
@@ -20437,4 +20825,4 @@ We'll evaluate and add it to this section if it meets quality criteria.
 
 **Contributions**: Issues and PRs welcome.
 
-**Last updated**: January 2026 | **Version**: 3.28.1
+**Last updated**: January 2026 | **Version**: 3.29.0

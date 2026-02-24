@@ -6,7 +6,7 @@ tags: [reference, architecture, diagrams, mermaid]
 
 # Claude Code — Visual Diagrams
 
-40 interactive Mermaid diagrams organized in 10 thematic files. Each diagram includes a Mermaid version (rendered natively on GitHub) and an ASCII fallback.
+41 interactive Mermaid diagrams organized in 10 thematic files. Each diagram includes a Mermaid version (rendered natively on GitHub) and an ASCII fallback.
 
 > For ASCII-only diagrams and a printable visual reference → [visual-reference.md](../visual-reference.md)
 
@@ -47,12 +47,12 @@ All diagrams use the consistent Bold Guy palette:
 | [03-configuration-system.md](./03-configuration-system.md) | 4 | Config precedence, skills vs commands vs agents, agent lifecycle, hooks |
 | [04-architecture-internals.md](./04-architecture-internals.md) | 4 | Master loop, tool categories, system prompt assembly, sub-agent isolation |
 | [05-mcp-ecosystem.md](./05-mcp-ecosystem.md) | 4 | MCP ecosystem map, MCP architecture, rug pull attack, config hierarchy |
-| [06-development-workflows.md](./06-development-workflows.md) | 4 | TDD cycle, spec-first pipeline, plan-driven, iterative refinement |
+| [06-development-workflows.md](./06-development-workflows.md) | 5 | TDD cycle, spec-first pipeline, plan-driven, iterative refinement, AI fluency paths |
 | [07-multi-agent-patterns.md](./07-multi-agent-patterns.md) | 5 | Agent topologies, worktrees, dual-instance, horizontal scaling, decision matrix |
 | [08-security-and-production.md](./08-security-and-production.md) | 4 | 3-layer defense, sandbox decision, verification paradox, CI/CD pipeline |
 | [09-cost-and-optimization.md](./09-cost-and-optimization.md) | 4 | Model selection, cost optimization, subscription tiers, token reduction |
 | [10-adoption-and-learning.md](./10-adoption-and-learning.md) | 3 | Onboarding paths, UVAL protocol, trust calibration |
-| **Total** | **40** | |
+| **Total** | **41** | |
 
 ---
 

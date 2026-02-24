@@ -314,3 +314,85 @@ Prompt → Output → Evaluate → Good? ──Yes──► Done
 </details>
 
 > **Source**: [Iterative Refinement](../workflows/iterative-refinement.md) — Line ~347
+
+---
+
+### AI Fluency — High vs Low Fluency Paths
+
+When Claude produces a polished-looking output, a cognitive bias kicks in: the more complete the output appears, the less critically most users evaluate it. This is the Artifact Paradox, documented by Anthropic across 9,830 conversations. The diagram shows what separates the 30% of high-fluency users from the 70% who accept first outputs — and the measurable difference in outcome quality.
+
+```mermaid
+flowchart TD
+    A([User sends request to Claude]) --> B(Claude generates output<br/>code · file · config · plan)
+    B --> C["⚠️ Artifact Paradox<br/>Polished output triggers<br/>cognitive acceptance bias"]
+
+    C -->|"70% of users"| D(Accept first output<br/>without critical review)
+    C -->|"30% of users"| E(Iterate + question<br/>define collaboration scope)
+
+    D --> D1["Fluency behaviors drop:<br/>−5.2pp gap identification<br/>−3.7pp fact-checking<br/>−3.1pp reasoning challenge"]
+    D1 --> D2([Silent defects · missed requirements])
+
+    E --> E1("Challenge the output:<br/>'What did you miss?<br/>What assumptions made?'")
+    E1 --> E2(Identify gaps<br/>Refine with full context)
+    E2 --> E3{Satisfied?}
+    E3 -->|No — iterate again| E1
+    E3 -->|Yes| E4([Verified, robust output ✓])
+
+    E4 --> G["Measured impact:<br/>5.6× more issue catches<br/>2.67 vs 1.33 avg behaviors<br/>Source: Anthropic AI Fluency Index, 2026"]
+
+    style A fill:#F5E6D3,color:#333
+    style B fill:#E87E2F,color:#fff
+    style C fill:#E85D5D,color:#fff
+    style D fill:#E85D5D,color:#fff
+    style D1 fill:#E85D5D,color:#fff
+    style D2 fill:#E85D5D,color:#fff
+    style E fill:#7BC47F,color:#333
+    style E1 fill:#6DB3F2,color:#fff
+    style E2 fill:#6DB3F2,color:#fff
+    style E3 fill:#E87E2F,color:#fff
+    style E4 fill:#7BC47F,color:#333
+    style G fill:#7BC47F,color:#333
+
+    click A href "https://www.anthropic.com/research/AI-fluency-index" "AI Fluency Index — Anthropic 2026"
+    click B href "https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md#common-pitfalls--best-practices" "Claude generates output"
+    click C href "https://www.anthropic.com/research/AI-fluency-index" "Artifact Paradox — Anthropic AI Fluency Index"
+    click D href "https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md#common-pitfalls--best-practices" "Accept without review"
+    click D1 href "https://www.anthropic.com/research/AI-fluency-index" "Fluency behaviors drop"
+    click D2 href "https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md#common-pitfalls--best-practices" "Silent defects"
+    click E href "https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md#23-plan-mode" "Iterate and question"
+    click E1 href "https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/ultimate-guide.md#rev-the-engine" "Challenge the output"
+    click E2 href "https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/workflows/iterative-refinement.md" "Identify gaps and refine"
+    click E3 href "https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/workflows/iterative-refinement.md" "Satisfied?"
+    click E4 href "https://github.com/FlorianBruniaux/claude-code-ultimate-guide/blob/main/guide/workflows/iterative-refinement.md" "Verified output"
+    click G href "https://www.anthropic.com/research/AI-fluency-index" "Measured impact — AI Fluency Index"
+```
+
+<details>
+<summary>ASCII version</summary>
+
+```
+User request → Claude output (code · file · config · plan)
+                        ↓
+              ⚠️ Artifact Paradox
+          Polished output → cognitive bias
+                        ↓
+    ┌───────────────────┴──────────────────────┐
+70% of users                            30% of users
+Accept without review               Iterate + question
+        ↓                                     ↓
+Fluency behaviors drop:         Challenge: "What did you miss?
+−5.2pp gap identification                What assumptions made?"
+−3.7pp fact-checking                          ↓
+−3.1pp reasoning challenge      Identify gaps → refine
+        ↓                                     ↓
+Silent defects                  Satisfied? ──No──► iterate
+                                            ↓ Yes
+                                Verified output ✓
+                                            ↓
+                               5.6× more issue catches
+                               2.67 vs 1.33 avg behaviors
+```
+
+</details>
+
+> **Source**: [Anthropic AI Fluency Index](https://www.anthropic.com/research/AI-fluency-index) (Swanson et al., 2026-02-23) — [Guide section: Common Pitfalls](../ultimate-guide.md#common-pitfalls--best-practices)

@@ -29,12 +29,15 @@ __pycache__/
 *.mp3
 *.onnx
 
-# Personal notes & temp filesà
+# Personal notes & temp files
 to-ignore/
 .grepai/
 whitepapers/
 claudedocs/
 .mcp.json
+
+# Book (work in progress, not public yet)
+book/
 
 # Multi-provider (will be moved to dedicated repo)
 examples/multi-provider/

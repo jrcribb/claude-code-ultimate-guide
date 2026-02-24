@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/FlorianBruniaux/claude-code-ultimate-guide/stargazers"><img src="https://img.shields.io/github/stars/FlorianBruniaux/claude-code-ultimate-guide?style=for-the-badge" alt="Stars"/></a>
-  <a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Updated-Feb_22,_2026_·_v3.28.1-brightgreen?style=for-the-badge" alt="Last Update"/></a>
+  <a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Updated-Feb_24,_2026_·_v3.29.0-brightgreen?style=for-the-badge" alt="Last Update"/></a>
   <a href="./quiz/"><img src="https://img.shields.io/badge/Quiz-274_questions-orange?style=for-the-badge" alt="Quiz"/></a>
   <a href="./examples/"><img src="https://img.shields.io/badge/Templates-175-green?style=for-the-badge" alt="Templates"/></a>
   <a href="./guide/security-hardening.md"><img src="https://img.shields.io/badge/🛡️_Threat_DB-24_CVEs_·_655_malicious_skills-red?style=for-the-badge" alt="Threat Database"/></a>
@@ -30,7 +30,7 @@
 **This guide teaches you to think differently about AI-assisted development:**
 - ✅ **Understand trade-offs** — When to use agents vs skills vs commands (not just how to configure them)
 - ✅ **Build mental models** — How Claude Code works internally (architecture, context flow, tool orchestration)
-- ✅ **Visualize concepts** — 40 Mermaid diagrams covering model selection, master loop, memory hierarchy, multi-agent patterns, security threats
+- ✅ **Visualize concepts** — 41 Mermaid diagrams covering model selection, master loop, memory hierarchy, multi-agent patterns, security threats, AI fluency paths
 - ✅ **Master methodologies** — TDD, SDD, BDD with AI collaboration (not just templates)
 - ✅ **Security mindset** — Threat modeling for AI systems (only guide with 24 CVEs + 655 malicious skills database)
 - ✅ **Test your knowledge** — 274-question quiz to validate understanding (no other resource offers this)
@@ -141,7 +141,7 @@ graph LR
     root --> quiz[🧠 quiz/<br/>274 questions]
     root --> tools[🔧 tools/<br/>utils]
     root --> machine[🤖 machine-readable/<br/>AI index]
-    root --> docs[📚 docs/<br/>83 evaluations]
+    root --> docs[📚 docs/<br/>84 evaluations]
 
     style root fill:#d35400,stroke:#e67e22,stroke-width:3px,color:#fff
     style guide fill:#2980b9,stroke:#3498db,stroke-width:2px,color:#fff
@@ -163,7 +163,7 @@ graph LR
 │  ├─ cheatsheet.md       1-page printable
 │  ├─ architecture.md     How Claude Code works internally
 │  ├─ methodologies.md    TDD, SDD, BDD workflows
-│  ├─ diagrams/           40 Mermaid diagrams (10 thematic files)
+│  ├─ diagrams/           41 Mermaid diagrams (10 thematic files)
 │  ├─ third-party-tools.md  Community tools (RTK, ccusage, Entire CLI)
 │  ├─ mcp-servers-ecosystem.md  Official & community MCP servers
 │  └─ workflows/          Step-by-step guides
@@ -189,7 +189,7 @@ graph LR
 │  ├─ claude-code-releases.yaml  Structured releases changelog
 │  └─ llms.txt            Standard LLM context file
 │
-└─ 📚 docs/               78 Resource Evaluations
+└─ 📚 docs/               84 Resource Evaluations
    └─ resource-evaluations/  5-point scoring, source attribution
 ```
 
@@ -213,18 +213,18 @@ graph LR
 
 ---
 
-### 🖼️ Visual Diagrams Series (40 Mermaid Diagrams)
+### 🖼️ Visual Diagrams Series (41 Mermaid Diagrams)
 
 **Outcome**: Grasp complex concepts instantly through visual mental models.
 
-**40 interactive diagrams** across 10 thematic files — GitHub-native Mermaid rendering + ASCII fallback for every diagram:
+**41 interactive diagrams** across 10 thematic files — GitHub-native Mermaid rendering + ASCII fallback for every diagram:
 - [Foundations](./guide/diagrams/01-foundations.md) — 4-layer context model, 9-step pipeline, permission modes
 - [Architecture](./guide/diagrams/04-architecture-internals.md) — Master loop, tool categories, system prompt assembly
 - [Multi-Agent](./guide/diagrams/07-multi-agent-patterns.md) — 3 topologies, worktrees, dual-instance, horizontal scaling
 - [Security](./guide/diagrams/08-security-and-production.md) — 3-layer defense, MCP rug pull attack chain, verification paradox
 - [Cost & Models](./guide/diagrams/09-cost-and-optimization.md) — Model selection tree, token reduction pipeline
 
-[Browse all 40 diagrams →](./guide/diagrams/)
+[Browse all 41 diagrams →](./guide/diagrams/)
 
 **What this means for you**: Understand the master loop before reading 20K lines, see multi-agent topologies at a glance, share visual security threat models with your team.
 
@@ -304,7 +304,7 @@ Educational templates with explanations:
 
 ---
 
-### 🔍 78 Resource Evaluations
+### 🔍 84 Resource Evaluations
 
 **Outcome**: Trust our recommendations are evidence-based.
 
@@ -759,7 +759,7 @@ cd quiz && npm install && npm start
 </details>
 
 <details>
-<summary><strong>Resource Evaluations</strong> (78 assessments)</summary>
+<summary><strong>Resource Evaluations</strong> (84 assessments)</summary>
 
 Systematic evaluation of external resources (tools, methodologies, articles) before integration into the guide.
 
@@ -821,6 +821,13 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
   - **Evaluation**: [`docs/resource-evaluations/anthropic-2026-agentic-coding-trends.md`](docs/resource-evaluations/anthropic-2026-agentic-coding-trends.md) (score 4/5)
   - **Integration**: Diffused across sections 9.17 (Multi-Instance ROI), 9.20 (Agent Teams adoption), 9.11 (Enterprise Anti-Patterns), Section 9 intro
 
+- **[AI Fluency Index](https://www.anthropic.com/research/AI-fluency-index)** (Anthropic, Feb 23, 2026)
+  - Research on 9,830 Claude.ai conversations: iteration multiplies fluency behaviors 2× (2.67 vs 1.33)
+  - **Artifact Paradox**: polished outputs (code, files) reduce critical evaluation — −5.2pp missing context, −3.7pp fact-checking, −3.1pp reasoning challenge
+  - Only 30% of users set collaboration terms explicitly — CLAUDE.md addresses this structurally
+  - **Evaluation**: [`docs/resource-evaluations/2026-02-23-anthropic-ai-fluency-index.md`](docs/resource-evaluations/2026-02-23-anthropic-ai-fluency-index.md) (score 4/5)
+  - **Integration**: 3 callouts in §2.3 (plan review), §3.1 (CLAUDE.md), §9.11 (Artifact Paradox) + [diagram](./guide/diagrams/06-development-workflows.md#ai-fluency--high-vs-low-fluency-paths)
+
 - **[Outcome Engineering — o16g Manifesto](https://o16g.com/)** (Cory Ondrejka, Feb 2026)
   - 16 principles for shifting from "software engineering" to "outcome engineering"
   - Author: CTO Onebrief, co-creator Second Life, ex-VP Google/Meta
@@ -839,7 +846,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ---
 
-*Version 3.28.1 | Updated daily · Feb 22, 2026 | Crafted with Claude*
+*Version 3.29.0 | Updated daily · Feb 24, 2026 | Crafted with Claude*
 
 <!-- SEO Keywords -->
 <!-- claude code, claude code tutorial, anthropic cli, ai coding assistant, claude code mcp,

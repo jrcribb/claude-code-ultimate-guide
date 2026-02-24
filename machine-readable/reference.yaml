@@ -3,8 +3,8 @@
 # Source: guide/ultimate-guide.md
 # Purpose: Condensed index for LLMs to quickly answer user questions about Claude Code
 
-version: "3.28.1"
-updated: "2026-02-17"
+version: "3.29.0"
+updated: "2026-02-23"
 
 # ════════════════════════════════════════════════════════════════
 # DEEP DIVE - Line numbers in guide/ultimate-guide.md
@@ -15,7 +15,7 @@ deep_dive:
   # Visual Diagrams Series (40 Mermaid diagrams)
   mermaid_diagrams:
     path: "guide/diagrams/"
-    description: "40 interactive Mermaid diagrams: model selection, agent lifecycle, memory hierarchy, security threats, multi-agent patterns"
+    description: "41 interactive Mermaid diagrams: model selection, agent lifecycle, memory hierarchy, security threats, multi-agent patterns, AI fluency paths"
     files: 10
     total_diagrams: 40
   # AI-Assisted Development Workflows (from MetalBear/arXiv research)
@@ -243,7 +243,7 @@ deep_dive:
   third_party_toad: "https://github.com/batrachianai/toad"
   third_party_conductor: "https://docs.conductor.build"
   # Configuration Management & Backup (Added 2026-02-02)
-  config_management_guide: "guide/ultimate-guide.md:4085"  # Section 3.28.1
+  config_management_guide: "guide/ultimate-guide.md:4085"  # Section 3.29.0
   config_hierarchy: "guide/ultimate-guide.md:4095"  # Global → Project → Local precedence
   config_git_strategy_project: "guide/ultimate-guide.md:4110"  # What to commit in .claude/
   config_git_strategy_global: "guide/ultimate-guide.md:4133"  # Version control ~/.claude/
@@ -434,6 +434,13 @@ deep_dive:
   skill_improvement_security_warnings: 5237
   skill_improvement_comparison: 5263
   skill_improvement_workflow: 5275
+  # Design Intelligence Skill (added 2026-02-23)
+  ui_ux_pro_max: "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill"
+  ui_ux_pro_max_site: "https://ui-ux-pro-max-skill.nextlevelbuilder.io"
+  ui_ux_pro_max_guide: 7023
+  ui_ux_pro_max_stars: 33700
+  ui_ux_pro_max_styles: 67
+  ui_ux_pro_max_palettes: 96
   # Agent Skills Open Standard (added 2026-02-01)
   agentskills_spec: "https://agentskills.io"
   agentskills_spec_repo: "https://github.com/agentskills/agentskills"
@@ -511,7 +518,7 @@ deep_dive:
   gsd_note: "Overlap with existing patterns (Ralph Loop, Gas Town, BMAD)"
   # Resource Evaluations (added 2026-01-26, updated 2026-02-07)
   resource_evaluations_directory: "docs/resource-evaluations/"
-  resource_evaluations_count: 83
+  resource_evaluations_count: 84
   resource_evaluations_methodology: "docs/resource-evaluations/README.md"
   resource_evaluations_watchlist: "docs/resource-evaluations/watch-list.md"
   resource_evaluations_appendix: "guide/ultimate-guide.md:15034"
@@ -746,6 +753,23 @@ deep_dive:
     premature_automation: "Automate before mastering manual"
     tool_sprawl: ">10 MCP servers = maintenance burden"
     no_roi_tracking: "Can't optimize what you don't measure"
+  # AI Fluency Research (Anthropic, Feb 2026) - Added 2026-02-23
+  ai_fluency_index: "https://www.anthropic.com/research/AI-fluency-index"
+  ai_fluency_evaluation: "docs/resource-evaluations/2026-02-23-anthropic-ai-fluency-index.md"
+  ai_fluency_score: "4/5"
+  ai_fluency_sample: "9,830 conversations, 7-day window, January 2026"
+  ai_fluency_iteration_stat: "5.6× more likely to question reasoning (iterative vs non-iterative users)"
+  ai_fluency_fluency_ratio: "2.67 vs 1.33 behaviors (iterative vs non-iterative)"
+  ai_fluency_collaboration_terms: "Only 30% of users set collaboration terms explicitly"
+  ai_fluency_artifact_paradox: "Artifact production → −5.2pp missing context, −3.7pp fact-check, −3.1pp questioning reasoning"
+  ai_fluency_plan_review_section: "guide/ultimate-guide.md:2522"  # Rev the Engine callout
+  ai_fluency_claudemd_section: "guide/ultimate-guide.md:4381"    # CLAUDE.md Best Practices callout
+  ai_fluency_artifact_section: "guide/ultimate-guide.md:13382"   # Artifact Paradox callout (Common Pitfalls)
+  ai_fluency_authors: "Swanson, Bent, Huang, Ludwig, Dakan, Feller (Anthropic)"
+  ai_fluency_published: "2026-02-23"
+  ai_fluency_future: "Claude Code platform analysis (mentioned in paper's future directions)"
+  ai_fluency_diagram: "guide/diagrams/06-development-workflows.md#ai-fluency--high-vs-low-fluency-paths"
+  ai_fluency_diagram_type: "flowchart — Artifact Paradox: 70% vs 30% user paths, behavioral drop data, iteration outcomes"
   # Advanced Plan Mode Patterns
   rev_the_engine: 2323
   mechanic_stacking: 2371
@@ -1291,7 +1315,7 @@ ecosystem:
       - "Cross-links modified → Update all 4 repos"
     history:
       - date: "2026-01-20"
-        event: "Code Landing sync v3.28.1, 66 templates, cross-links"
+        event: "Code Landing sync v3.29.0, 66 templates, cross-links"
         commit: "5b5ce62"
       - date: "2026-01-20"
         event: "Cowork Landing fix (paths, README, UI badges)"
@@ -1303,7 +1327,7 @@ ecosystem:
 onboarding_matrix_meta:
   version: "2.0.0"
   last_updated: "2026-02-05"
-  aligned_with_guide: "3.28.1"
+  aligned_with_guide: "3.29.0"
   changelog:
     - version: "2.0.0"
       date: "2026-02-05"
@@ -1331,7 +1355,7 @@ onboarding_matrix:
       core: [rules, sandbox_native_guide, commands]
       time_budget: "5 min"
       topics_max: 3
-      note: "SECURITY FIRST - sandbox before commands (v3.28.1 critical fix)"
+      note: "SECURITY FIRST - sandbox before commands (v3.29.0 critical fix)"
 
     beginner_15min:
       core: [rules, sandbox_native_guide, workflow, essential_commands]
@@ -1416,7 +1440,7 @@ onboarding_matrix:
         - default: agent_validation_checklist
       time_budget: "60 min"
       topics_max: 6
-      note: "Dual-instance pattern for quality workflows (v3.28.1)"
+      note: "Dual-instance pattern for quality workflows (v3.29.0)"
 
   learn_security:
     intermediate_30min:
@@ -1427,7 +1451,7 @@ onboarding_matrix:
         - default: permission_modes
       time_budget: "30 min"
       topics_max: 4
-      note: "NEW goal (v3.28.1) - Security-focused learning path"
+      note: "NEW goal (v3.29.0) - Security-focused learning path"
 
     power_60min:
       core: [sandbox_native_guide, mcp_secrets_management, security_hardening]
@@ -1452,7 +1476,7 @@ onboarding_matrix:
       core: [rules, sandbox_native_guide, workflow, essential_commands, context_management, plan_mode]
       time_budget: "60 min"
       topics_max: 6
-      note: "Security foundation + core workflow (v3.28.1 sandbox added)"
+      note: "Security foundation + core workflow (v3.29.0 sandbox added)"
 
     intermediate_120min:
       core: [plan_mode, agents, skills, config_hierarchy, git_mcp_guide, hooks, mcp_servers]

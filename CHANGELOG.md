@@ -6,11 +6,62 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [3.29.0] - 2026-02-24
+
+### Added
+
+- **guide/ultimate-guide.md §5.5** — Design Intelligence: UI UX Pro Max skill
+  - Repository le plus populaire de l'écosystème (33.7k stars, 3.3k forks, MIT, v2.2.1)
+  - Design reasoning engine BM25 offline sur ~400 règles JSON locales (67 styles UI, 96 palettes, 57 typographies)
+  - Compatible 14 assistants AI (Claude Code, Cursor, Copilot, Windsurf…)
+  - Guide installation, workflows, exemples d'usage
+
+- **guide/observability.md** — Section MLflow Tracing complète (~120 lignes)
+  - CLI mode (zéro Python) + SDK mode avec wrapping API
+  - LLM-as-judge pour régression automatique de qualité
+  - Exact token counts vs variance ~15-25% des hooks
+  - Setup complet : tracking URI, auto-tracing, evaluation avec GPT-4o judge
+  - Decision guide : quand MLflow vs ccusage vs OpenTelemetry
+
+- **guide/diagrams/06-development-workflows.md** — Diagramme "AI Fluency — High vs Low Fluency Paths"
+  - 41e diagramme Mermaid du guide
+  - Basé sur Anthropic AI Fluency Index (9,830 conversations analysées)
+  - Visualise le gap entre utilisateurs 30% haute-fluency vs 70% basse-fluency
+
+- **guide/ultimate-guide.md** — 3 callouts empiriques Anthropic AI Fluency Index
+  - Rev the Engine pattern : utilisateurs qui challengent le raisonnement 5.6× plus susceptibles de détecter erreurs
+  - CLAUDE.md : seulement 30% définissent les termes de collaboration explicitement avant de démarrer
+  - Source : Swanson et al., "The AI Fluency Index", Anthropic (2026-02-23)
+
+- **guide/ultimate-guide.md** — Nouvelles docs v2.1.47-v2.1.50
+  - `WorktreeCreate`, `WorktreeRemove`, `ConfigChange` hook events avec exemples bash
+  - `last_assistant_message` field dans Stop/SubagentStop hooks
+  - `--from-pr` flag documentation + auto-link sessions PR
+  - Repo-Level Plugin Policy via `--add-dir` (settings.json `extraKnownMarketplaces`, `enabledPlugins`)
+  - LSP `startupTimeout` configuration (v2.1.50+)
+
+- **docs/resource-evaluations/** — 4 nouvelles évaluations (83 → 84 fichiers)
+  - `2026-02-23-agentsview-session-analytics.md` — AgentsView score 3/5
+  - `2026-02-23-anthropic-ai-fluency-index.md` — AI Fluency Index score 4/5
+  - `2026-02-23-veille-cc-releases-2144-2150.md` — Veille releases CC
+  - `ui-ux-pro-max-skill.md` — UI UX Pro Max skill score 4/5
+
 ### Documentation
 
 - **Claude Code Releases**: Updated tracking to v2.1.52
   - v2.1.51: `claude remote-control` subcommand, BashTool login shell perf, SDK account env vars, /model human-readable labels
   - v2.1.52: VSCode crash fix on Windows
+
+### Changed
+
+- **README.md** — 41 diagrammes (était 40), 84 évaluations (était 78)
+- **machine-readable/reference.yaml** — Entries ajoutées pour nouveaux contenus
+- **guide/diagrams/README.md** — Ajout du 41e diagramme AI Fluency
+
+### Version Bump
+
+- Bumped guide version: 3.28.1 → 3.29.0
+- Raison : nouvelle section MLflow observability, UI UX Pro Max, AI Fluency diagram + callouts empiriques, 4 évaluations ressources
 
 ### Added
 
@@ -22,6 +73,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Anti-patterns documentés : big bang migration, no parallel run, skip discovery, trust aveugle sur business logic
   - Sources : arXiv 2504.11335, AWS EKS case study (juil. 2025), WJAETS 2025, cas Airbnb (6 sem. vs 1.5 an)
   - Évaluation ressource : score 2/5 maintenu (article marketing sans depth technique) — workflow intégré via recherche indépendante
+
+- **Anthropic AI Fluency Index (Feb 23, 2026)** — Intégration de la recherche officielle Anthropic (9,830 conversations analysées) en 3 points ciblés + diagram
+  - **§2.3 Rev the Engine** — Callout empirique : 5.6× plus de catches d'erreurs pour les utilisateurs qui questionnent le raisonnement (justifie le plan review)
+  - **§3.1 CLAUDE.md Best Practices** — Callout 30% : seulement 30% des utilisateurs définissent des termes de collaboration → CLAUDE.md comble ce gap structurellement
+  - **§9.11 Common Pitfalls** — Callout "⚠️ Artifact Paradox" : artefacts polis (code, fichiers) → −5.2pp identification gaps, −3.7pp fact-checking, −3.1pp questionnement (avec 5 contre-mesures concrètes)
+  - **guide/diagrams/06-development-workflows.md** — 5e diagram : "AI Fluency — High vs Low Fluency Paths" (flowchart Bold Guy, palette standard, click hrefs + ASCII fallback), total diagrams : 40 → **41**
+  - **docs/resource-evaluations/2026-02-23-anthropic-ai-fluency-index.md** — Fichier d'évaluation (score 4/5, fact-check complet avec citations exactes de l'article)
+  - **machine-readable/reference.yaml** — 16 entrées `ai_fluency_*` + `ai_fluency_diagram`, `resource_evaluations_count` 83→84, `mermaid_diagrams.description` mis à jour
 
 - **docs/resource-evaluations/2026-02-23-agentsview-session-analytics.md** — Évaluation AgentsView (score 3/5, à intégrer dans 2-4 semaines)
   - Web app locale (Go + Svelte 5 + SQLite FTS5) pour search + analytics des sessions Claude Code, Codex, Gemini CLI
