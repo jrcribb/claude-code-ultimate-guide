@@ -161,30 +161,35 @@ Claude creates todos:
 - [ ] REFACTOR: Clean up
 ```
 
-### With /plan Mode
+### With Plan Mode
 
 Use planning for test strategy:
 
 ```
-/plan
+[Press Shift+Tab to enter Plan Mode]
 
 I need to implement a shopping cart with TDD.
 Plan the test cases before we start writing any code.
 ```
 
-Claude will explore codebase, then propose test plan before any implementation.
+Claude will explore codebase in read-only mode, then propose test plan before any implementation.
 
 ### With Hooks
 
-Auto-run tests on file changes:
+Auto-run tests after edits using a PostToolUse hook:
 
-```yaml
-# .claude/hooks.yaml
-post_edit:
-  - pattern: "**/*.test.ts"
-    command: "npm test -- --testPathPattern=$FILE"
-  - pattern: "**/*.ts"
-    command: "npm test --watchAll=false"
+```json
+// In .claude/settings.json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "command": "npm test --watchAll=false 2>&1 | head -20"
+      }
+    ]
+  }
+}
 ```
 
 ### With Sub-Agents

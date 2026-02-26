@@ -49,15 +49,15 @@ ls -la ~/.claude/skills/ 2>/dev/null
 ls -la .claude/agents/ 2>/dev/null
 ls -la ~/.claude/agents/ 2>/dev/null
 
-# Check agent allowed-tools
-grep -r "allowed-tools" .claude/agents/ 2>/dev/null
-grep -r "allowed-tools" ~/.claude/agents/ 2>/dev/null
+# Check agent tools field
+grep -r "^tools:" .claude/agents/ 2>/dev/null
+grep -r "^tools:" ~/.claude/agents/ 2>/dev/null
 ```
 
 **Check against threat-db.yaml:**
 - [ ] Any skill/agent name matching `malicious_skills` entries? → CRITICAL
 - [ ] Any skill/agent author matching `malicious_authors` entries? → CRITICAL
-- [ ] Any agent with `allowed-tools: ["Bash"]` only? → HIGH
+- [ ] Any agent with `tools: Bash` only? → HIGH
 - [ ] Any agent with overly broad tool access + vague description? → MEDIUM
 
 ### Phase 4: Hook Security

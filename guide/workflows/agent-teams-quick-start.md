@@ -99,7 +99,7 @@ of agents to work in parallel on complex tasks using:
 3. Claude presents consolidated findings (convergence + unique insights)
 
 **Navigation**:
-- `Shift+Up/Down`: See individual agent outputs
+- `Shift+Down`: Cycle through teammate outputs (in-process mode)
 - Main view: Consolidated synthesis
 
 **Duration**: 1-2 min for simple 2-agent task.
@@ -370,7 +370,7 @@ claude
 > [FILES/DIRECTORIES TO ANALYZE]
 
 # 4. Observe (optional)
-# Shift+Up/Down to see individual agent outputs
+# Shift+Down to cycle through teammate outputs (in-process mode)
 
 # 5. Synthesis
 # Claude presents consolidated findings automatically

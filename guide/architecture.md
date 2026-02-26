@@ -729,15 +729,19 @@ Hooks allow programmatic control over Claude's actions:
 
 ```json
 {
+  "session_id": "abc123",
+  "transcript_path": "/home/user/.claude/projects/.../transcript.jsonl",
+  "cwd": "/path/to/project",
+  "permission_mode": "default",
   "hook_event_name": "PreToolUse",
   "tool_name": "Bash",
   "tool_input": {
     "command": "npm install lodash"
-  },
-  "session_id": "abc123",
-  "cwd": "/path/to/project"
+  }
 }
 ```
+
+Common fields sent to all events: `session_id`, `transcript_path`, `cwd`, `permission_mode`, `hook_event_name`. Event-specific fields (e.g., `tool_name`/`tool_input` for PreToolUse) are added on top.
 
 → **Cross-reference**: See [Section 7 - Hooks](./ultimate-guide.md#7-hooks) in the main guide for complete examples.
 

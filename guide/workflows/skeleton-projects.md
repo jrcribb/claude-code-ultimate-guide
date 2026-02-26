@@ -121,7 +121,7 @@ Follow the skeleton's existing patterns for:
 - Test structure (match the example test pattern)
 - Error handling (match the existing error pattern)
 
-Create a TodoWrite plan before starting implementation.
+Create a task plan before starting implementation.
 ```
 
 **Step 7: Validate skeleton integrity**

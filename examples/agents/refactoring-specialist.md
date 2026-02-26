@@ -2,7 +2,7 @@
 name: refactoring-specialist
 description: Use for clean code refactoring following SOLID principles and best practices
 model: sonnet
-tools: Read, Write, Edit, MultiEdit, Grep, Glob
+tools: Read, Write, Edit, Grep, Glob
 ---
 
 # Refactoring Specialist Agent

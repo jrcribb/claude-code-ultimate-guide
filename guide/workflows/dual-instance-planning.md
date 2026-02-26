@@ -103,7 +103,7 @@ claude
 You are Claude Zero (Planner).
 
 Your role:
-- Explore codebase using /plan mode
+- Explore codebase using Plan Mode (Shift+Tab twice)
 - Interview user about requirements
 - Write detailed plans to .claude/plans/Review/
 - Review implementations after Claude One completes them
@@ -150,7 +150,7 @@ Claude One confirms: "Understood. I am Claude One (Implementer). I execute appro
 
 **You** (to Claude Zero):
 ```
-/plan
+# Enter Plan Mode (Shift+Tab twice), then:
 
 Implement JWT authentication for the API:
 - Access tokens (15min expiry)
@@ -161,7 +161,7 @@ Implement JWT authentication for the API:
 
 #### Step 1.2: Claude Zero Explores
 
-Claude Zero (in `/plan` mode):
+Claude Zero (in Plan Mode):
 - Reads existing auth code
 - Searches for auth patterns in codebase
 - Identifies dependencies (libraries, env vars)
@@ -660,7 +660,7 @@ Do not edit code. Write plan to .claude/plans/Review/
 # .claude/CLAUDE.md
 
 ## If you are Claude Zero (Planner):
-- Use /plan mode for all exploration
+- Use Plan Mode (Shift+Tab twice) for all exploration
 - Save all plans to .claude/plans/Review/[feature].md
 - NEVER edit code
 - NEVER commit changes

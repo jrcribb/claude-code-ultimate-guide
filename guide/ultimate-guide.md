@@ -373,7 +373,7 @@ These 7 commands are the ones I use most frequently:
 | `@file.ts` | Reference a specific file | `@src/app.tsx`, `@README.md` |
 | `Ctrl+C` | Cancel current operation | Stop long-running analysis |
 | `Ctrl+R` | Search command history | Find previous prompts |
-| `Esc` | Dismiss current suggestion | Skip unwanted changes |
+| `Esc` | Stop Claude mid-action | Interrupt current operation |
 
 #### Shell Commands with `!`
 
@@ -1518,9 +1518,9 @@ When context gets high:
 - Use when changing topics
 
 **Option 3: Summarize from here** (v2.1.32+)
-- Right-click message in conversation history
-- Select "Summarize from here"
-- Claude summarizes everything from that point forward
+- Use `/rewind` (or `Esc + Esc`) to open the checkpoint list
+- Select a checkpoint and choose "Summarize from here"
+- Claude summarizes everything from that point forward, keeping earlier context intact
 - Frees space while keeping critical context
 - More precise than full `/compact`
 
@@ -1569,8 +1569,8 @@ Claude Code has two distinct memory systems. Understanding the difference is cru
 | Aspect | Session Memory | Persistent Memory |
 |--------|----------------|-------------------|
 | **Scope** | Current conversation only | Across all sessions |
-| **Managed by** | `/compact`, `/clear` | Serena MCP (`write_memory`) |
-| **Lost when** | Session ends or `/clear` | Explicitly deleted |
+| **Managed by** | `/compact`, `/clear` | `/memory` command, CLAUDE.md files |
+| **Lost when** | Session ends or `/clear` | Explicitly deleted from files |
 | **Use case** | Immediate working context | Long-term decisions, patterns |
 
 **Session Memory** (short-term):
@@ -2364,11 +2364,9 @@ You: Let's plan this feature before implementing
 
 ### Exiting Plan Mode
 
-```
-/execute
-```
+Press `Shift+Tab` to toggle back to Normal Mode (Act Mode). You can also type a message and Claude will ask: "Ready to implement this plan?"
 
-Or Claude will ask: "Ready to implement this plan?"
+> **Note**: `Shift+Tab` toggles between Plan Mode and Normal Mode during a session. Use `Shift+Tab` twice from Normal Mode to enter Plan Mode, once from Plan Mode to return.
 
 ### Auto Plan Mode
 
@@ -2596,21 +2594,20 @@ Rewind is Claude Code's undo mechanism.
 
 ### Using Rewind
 
-```
-/rewind
-```
-
-Or:
-
-```
-You: Undo the last change
-```
+Access via `Esc + Esc` (double-tap Escape) or the `/rewind` command. This opens a scrollable checkpoint list.
 
 ### What Rewind Does
 
-- Reverts file changes
-- Restores previous state
-- Works across multiple files
+Rewind provides four distinct actions from the checkpoint list:
+
+| Action | Effect |
+|--------|--------|
+| **Restore code and conversation** | Revert both file changes and conversation to selected point |
+| **Restore conversation** | Keep current code, rewind conversation only |
+| **Restore code** | Revert file changes, keep conversation |
+| **Summarize from here** | Compress conversation from selected point forward (frees space without reverting) |
+
+Key distinction: **Restore** = undo (reverts state). **Summarize** = compress (frees space without reverting). Checkpoints persist across sessions (30-day cleanup).
 
 ### Limitations
 
@@ -2751,7 +2748,7 @@ _Quick jump:_ [Decision Table](#decision-table) · [Effort Levels](#effort-level
 | Critical security audit | Opus | max | ~$2+ |
 | Multi-agent orchestration | Sonnet + Haiku | mixed | variable |
 
-> **Note on costs**: Estimates based on API pricing (Haiku $0.25/$1.25 per MTok, Sonnet $3/$15, Opus $15/$75). Pro/Max subscribers pay a flat rate — prioritize quality over cost. Opus activates thinking by default. Toggle: `Alt+T`. See [Section 2.2](#cost-awareness--optimization) for full pricing breakdown.
+> **Note on costs**: Estimates based on API pricing (Haiku $0.80/$4.00 per MTok, Sonnet $3/$15, Opus $5/$25). Pro/Max subscribers pay a flat rate, so prioritize quality over cost. See [Section 2.2](#cost-awareness--optimization) for full pricing breakdown.
 >
 > **Budget modifier** (Teams Standard/Pro): downgrade one tier per phase — use Sonnet where the table says Opus, Haiku where it says Sonnet for mechanical implementation tasks. Community pattern: *Sonnet for Plan → Haiku for Implementation* on a $25/mo Teams Standard plan.
 
@@ -4248,10 +4245,17 @@ CLAUDE.md files are persistent instructions that Claude reads at the start of ev
 │        ▼                                                │
 │   /project/.claude/CLAUDE.md   (Local - Personal prefs) │
 │                                                         │
-│   Priority: Local > Project > Global                    │
+│   All files are merged additively.                      │
+│   On conflict: more specific file wins.                 │
 │                                                         │
 └─────────────────────────────────────────────────────────┘
 ```
+
+**Additional discovery**: In monorepos, parent directory CLAUDE.md files are automatically pulled in, and child directory CLAUDE.md files are loaded on demand when Claude works with files in those directories. See [CLAUDE.md in Monorepos](#claudemd-in-monorepos) for details.
+
+**Personal overrides**: For personal instructions not committed to Git, you have two options:
+- `/project/.claude/CLAUDE.md` (add to `.gitignore`)
+- `/project/CLAUDE.md.local` (automatically gitignored by convention)
 
 ### Minimum Viable CLAUDE.md
 
@@ -4431,7 +4435,9 @@ Personal overrides not committed to git (add to .gitignore):
 | Keep it concise | Write essays |
 | Include examples | Be vague |
 | Update when conventions change | Let it go stale |
-| Reference external docs | Duplicate documentation |
+| Reference external docs with `@path` | Duplicate documentation inline |
+
+**File imports**: CLAUDE.md can import additional files using `@path/to/file` syntax (e.g., `@README.md`, `@docs/conventions.md`, `@~/.claude/my-overrides.md`). Imported files load on-demand, only consuming tokens when referenced.
 
 > **📊 Empirical backing — Anthropic AI Fluency Index (Feb 2026)**
 >
@@ -4616,7 +4622,7 @@ The `.claude/` folder is your project's Claude Code directory for memory, settin
 ```
 .claude/
 ├── CLAUDE.md              # Local instructions (gitignored)
-├── settings.json          # Hook configuration
+├── settings.json          # Session, tool, and hook configuration
 ├── settings.local.json    # Personal permissions (gitignored)
 ├── agents/                # Custom agent definitions
 │   ├── README.md
@@ -4685,6 +4691,8 @@ This hierarchy enables:
 - **Team coordination**: Share hooks/rules in `.claude/settings.json`
 - **Personal flexibility**: Override settings in `.local.json` without Git conflicts
 - **Multi-machine consistency**: Global defaults in `~/.claude/` synced separately
+
+> **Legacy note**: Claude Code still supports `~/.claude.json` for backward compatibility, but `~/.claude/settings.json` is the recommended location. CLI flags (e.g., `--teammate-mode in-process`) override all file-based settings.
 
 #### Git Strategy for Project Configuration
 
@@ -4895,7 +4903,9 @@ tar -xzf claude-config-YYYY-MM-DD_HH-MM-SS.tar.gz -C ~/
 
 ### settings.json (Team Configuration)
 
-This file configures hooks and is committed to the repo:
+This file configures hooks, permissions, environment variables, and more. The project-level `.claude/settings.json` is committed to the repo (shared with team). Available keys include: `hooks`, `env`, `allowedTools`, `autoApproveTools`, `dangerouslyAllowedPatterns`, `teammates`, `teammateMode`, `apiKeyHelper`.
+
+**Hooks example** (most common use in `.claude/settings.json`):
 
 ```json
 {
@@ -4975,6 +4985,7 @@ Personal permission overrides (gitignored):
 | `Write` | All file writes |
 | `WebSearch` | Web search capability |
 | `mcp__serena__*` | All Serena MCP tools |
+| `mcp__github__create_issue` | Specific MCP tool (format: `mcp__<server>__<tool>`) |
 
 ### Permission Behavior
 
@@ -4985,9 +4996,14 @@ Personal permission overrides (gitignored):
 | `ask` | Prompt for confirmation |
 | (default) | Use default permission mode |
 
-### allowedTools Configuration (Alternative)
+### allowedTools / autoApproveTools Configuration
 
-For granular control, use `~/.claude/settings.json`:
+For granular control in `~/.claude/settings.json` or `.claude/settings.json`, two formats are available.
+
+**`autoApproveTools`** (array format, simpler) auto-approves listed tools without prompts.
+**`allowedTools`** (object format with `true`/`false` values) provides fine-grained control including explicit denials.
+
+Example using `autoApproveTools` in `~/.claude/settings.json`:
 
 ```json
 {
@@ -5022,17 +5038,16 @@ For granular control, use `~/.claude/settings.json`:
 **Level 1 - Beginner (very restrictive)**:
 ```json
 {
-  "allowedTools": ["Read", "Grep", "Glob"]
+  "autoApproveTools": ["Read", "Grep", "Glob"]
 }
 ```
 
 **Level 2 - Intermediate**:
 ```json
 {
-  "allowedTools": [
+  "autoApproveTools": [
     "Read", "Grep", "Glob",
-    "Bash(git *)", "Bash(pnpm *)",
-    "TodoRead", "TodoWrite"
+    "Bash(git *)", "Bash(pnpm *)"
   ]
 }
 ```
@@ -5040,11 +5055,10 @@ For granular control, use `~/.claude/settings.json`:
 **Level 3 - Advanced**:
 ```json
 {
-  "allowedTools": [
+  "autoApproveTools": [
     "Read", "Grep", "Glob", "WebFetch",
     "Edit", "Write",
-    "Bash(git *)", "Bash(pnpm *)", "Bash(npm *)",
-    "Task(*)", "TodoRead", "TodoWrite"
+    "Bash(git *)", "Bash(pnpm *)", "Bash(npm *)"
   ]
 }
 ```
@@ -5615,10 +5629,6 @@ name: agent-name
 description: Clear activation trigger (50-100 chars)
 model: sonnet
 tools: Read, Write, Edit, Bash, Grep, Glob
-skills:
-  - skill-name
-disallowedTools:
-  - WebSearch
 ---
 
 [Markdown instructions for the agent]
@@ -5632,25 +5642,8 @@ disallowedTools:
 | `description` | ✅ | When to activate this agent |
 | `model` | ❌ | `sonnet` (default), `opus`, or `haiku` |
 | `tools` | ❌ | Allowed tools (comma-separated) |
-| `skills` | ❌ | Skills to inherit |
-| `disallowedTools` | ❌ | Tools to block |
-| `memory` | ❌ | Pre-populated memory context (v2.1.32+) |
-| `background` | ❌ | Always run as background task — non-blocking (v2.1.49+) |
-| `isolation` | ❌ | `"worktree"` — spawn agent in isolated git worktree (v2.1.50+) |
 
-**New in v2.1.32**: The `memory` field enables pre-populated agent context:
-
-```yaml
----
-name: security-auditor
-memory: |
-  This project follows OWASP Top 10 guidelines.
-  Previous audit (Dec 2025) flagged JWT expiry handling.
-  Team prefers early warnings over false positives.
----
-```
-
-This memory is injected into the agent's context at spawn, enabling continuity without repeating project details.
+> **Community patterns**: Some users add extra fields like `skills`, `background`, `isolation`, or `memory` in their agent definitions. These are not part of the official documented spec but may work as conventions passed through to the agent's system prompt. The officially documented fields are `name`, `description`, `tools`, and `model`.
 
 ### Model Selection
 
@@ -5800,28 +5793,14 @@ Before deploying a custom agent, validate against these criteria:
 
 > **Automated audit**: Run `/audit-agents-skills` for a comprehensive quality audit across all agents, skills, and commands. Scores each file on 16 criteria with weighted grading (32 points for agents/skills, 20 for commands). See `examples/skills/audit-agents-skills/` for the full scoring methodology.
 
-### Background Agents (v2.1.49+)
+### Background Subagents
 
-The `background: true` field makes an agent always run non-blocking — the parent session continues immediately instead of waiting for the agent to finish.
-
-```yaml
----
-name: test-runner
-description: Run the full test suite after every significant change
-model: sonnet
-tools: Bash
-background: true   # Non-blocking — parent continues without waiting
----
-
-Run `npm test` and report results. Flag failures with file + line number.
-```
-
-**Vs. standard agents:**
+Subagents can run in the background without blocking the main session. This is useful for fire-and-forget tasks like running tests, linting, or notifications.
 
 | Mode | Behavior | Use when |
 |------|----------|----------|
 | Default | Parent waits for agent output | Need result before continuing |
-| `background: true` | Agent runs in parallel, parent continues | Fire-and-forget (tests, linting, notifications) |
+| Background | Agent runs in parallel, parent continues | Fire-and-forget (tests, linting, notifications) |
 
 **Managing background agents:**
 
@@ -5829,36 +5808,11 @@ Run `npm test` and report results. Flag failures with file + line number.
 # List running agents + kill overlay
 ctrl+f    # Opens agent manager overlay
 
-# Kill ALL background agents at once (v2.1.47+)
-ctrl+f    # Use the overlay to kill selected or all agents
-
 # Cancel main thread only (background agents keep running)
 ESC
 ctrl+c
 ```
 
-### `claude agents` CLI (v2.1.50+)
-
-List all configured agents across global and project directories:
-
-```bash
-claude agents
-```
-
-**Example output:**
-
-```
-Global agents (~/.claude/agents/):
-  ├── code-reviewer   [sonnet] — Code quality reviews, security audits
-  ├── test-runner     [sonnet] [background] — Run full test suite
-  └── security-audit  [opus]   — OWASP Top 10, auth, encryption
-
-Project agents (.claude/agents/):
-  ├── backend-arch    [opus]   — API design, database schemas
-  └── docs-writer     [haiku]  — Generate docs from code
-```
-
-Useful for debugging agent discovery issues or auditing which agents are available in a project.
 
 ## 4.5 Agent Examples
 
@@ -6279,7 +6233,7 @@ Skills are knowledge packages that agents can inherit.
 | Concept | Purpose | Invocation |
 |---------|---------|------------|
 | **Agent** | Context isolation tool | Task tool delegation |
-| **Skill** | Knowledge module | Inherited by agents |
+| **Skill** | Knowledge module | `/skill-name` or auto-loaded |
 | **Command** | Process workflow | Slash command |
 
 #### Detailed Comparison
@@ -6288,7 +6242,7 @@ Skills are knowledge packages that agents can inherit.
 |--------|----------|--------|--------|
 | **What it is** | Prompt template | Knowledge module | Context isolation tool |
 | **Location** | `.claude/commands/` | `.claude/skills/` | `.claude/agents/` |
-| **Invocation** | `/command-name` | Inherited via `@skill` | Task tool delegation |
+| **Invocation** | `/command-name` | `/skill-name` or auto-loaded | Task tool delegation |
 | **Execution** | In main conversation | Loaded into context | Separate subprocess |
 | **Context** | Shares main context | Adds to agent context | Isolated context |
 | **Best for** | Repeatable workflows | Reusable knowledge | Scope-limited analysis |
@@ -6377,10 +6331,8 @@ skill-name/
 ```yaml
 ---
 name: skill-name
-description: Short description for activation (100 chars)
-allowed-tools: Read, Grep, Bash
-context: fork
-agent: specialist
+description: Short description for activation (max 1024 chars)
+allowed-tools: Read Grep Bash
 ---
 ```
 
@@ -6388,14 +6340,13 @@ agent: specialist
 |-------|------|-------------|
 | `name` | [agentskills.io](https://agentskills.io) | Lowercase, 1-64 chars, hyphens only, no `--`, must match directory name |
 | `description` | [agentskills.io](https://agentskills.io) | What the skill does and when to use it (max 1024 chars) |
-| `allowed-tools` | [agentskills.io](https://agentskills.io) | Tools this skill can use (experimental) |
+| `allowed-tools` | [agentskills.io](https://agentskills.io) | Space-delimited list of pre-approved tools (experimental) |
 | `license` | [agentskills.io](https://agentskills.io) | License name or reference to bundled file |
 | `compatibility` | [agentskills.io](https://agentskills.io) | Environment requirements (max 500 chars) |
 | `metadata` | [agentskills.io](https://agentskills.io) | Arbitrary key-value pairs (author, version, etc.) |
-| `context` | **CC only** | `fork` (isolated) or `inherit` (shared) |
-| `agent` | **CC only** | `specialist` (domain) or `general` (broad) |
+| `disable-model-invocation` | **CC only** | `true` to make skill manual-only (workflow with side effects) |
 
-> **Open standard**: Agent Skills follow the [agentskills.io specification](https://agentskills.io), created by Anthropic and supported by 26+ platforms (Cursor, VS Code, GitHub, Codex, Gemini CLI, Goose, Roo Code, etc.). Skills you create for Claude Code are portable. Fields marked **CC only** are Claude Code extensions ignored by other platforms.
+> **Open standard**: Agent Skills follow the [agentskills.io specification](https://agentskills.io), created by Anthropic and supported by 30+ platforms (Cursor, VS Code, GitHub, Codex, Gemini CLI, Goose, Roo Code, etc.). Skills you create for Claude Code are portable. The `disable-model-invocation` field is a Claude Code extension.
 
 ### Validating Skills
 
@@ -6414,9 +6365,7 @@ skills-ref to-prompt ./my-skill     # Generate <available_skills> XML for agent 
 ---
 name: your-skill-name
 description: Expert guidance for [domain] problems
-allowed-tools: Read, Grep, Bash
-context: fork
-agent: specialist
+allowed-tools: Read Grep Bash
 ---
 
 # Your Skill Name
@@ -6484,9 +6433,7 @@ See `reference.md` for detailed documentation.
 ---
 name: security-guardian
 description: Security expertise for OWASP Top 10, auth, and data protection
-allowed-tools: Read, Grep, Bash
-context: fork
-agent: specialist
+allowed-tools: Read Grep Bash
 ---
 
 # Security Guardian
@@ -6565,9 +6512,7 @@ const apiKey = "sk-1234567890abcdef";
 ---
 name: tdd
 description: Test-Driven Development methodology and patterns
-allowed-tools: Read, Write, Bash
-context: inherit
-agent: specialist
+allowed-tools: Read Write Bash
 ---
 
 # TDD (Test-Driven Development)
@@ -6870,8 +6815,8 @@ Then reference in an agent:
 ```yaml
 ---
 name: security-auditor
-role: Security testing specialist
-skills: ["sql-injection-testing"]
+description: Security testing specialist for penetration testing
+tools: Read, Grep, Bash
 ---
 ```
 
@@ -7575,14 +7520,19 @@ diff ~/insights-reports/2026-01-01.html ~/insights-reports/2026-02-01.html
 # 2. Review "What's hindering you" section
 # Note: Common friction → buggy code (48% of events)
 
-# 3. Implement quick win (pre-commit hook)
+# 3. Implement quick win (PostToolUse hook for build checks)
 cat > .claude/settings.json << 'EOF'
 {
   "hooks": {
-    "preCommit": [
+    "PostToolUse": [
       {
-        "matcher": "**/*.ts,**/*.tsx",
-        "command": "npm run build 2>&1 | tail -20"
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run build 2>&1 | tail -20"
+          }
+        ]
       }
     ]
   }
@@ -7934,25 +7884,25 @@ Hooks are scripts that run automatically when specific events occur.
 
 ### Event Types
 
-| Event | When It Fires | Use Case |
-|-------|---------------|----------|
-| `PreToolUse` | Before any tool runs | Security validation |
-| `PostToolUse` | After any tool runs | Formatting, logging |
-| `UserPromptSubmit` | User sends a message | Context enrichment |
-| `Notification` | Claude sends notification | Sound alerts |
-| `SessionStart` | Session begins | Initialization |
-| `SessionEnd` | Session ends | Cleanup |
-| `Stop` | Claude finishes responding | Post-response actions |
-| `PermissionRequest` | Permission dialog appears | Custom approval logic |
-| `SubagentStart` | Sub-agent starts | Subagent initialization (v2.1.32+) |
-| `SubagentStop` | Sub-agent completes | Subagent cleanup |
-| `TeammateIdle` | Agent team member goes idle | Team coordination (v2.1.32+) |
-| `TaskCompleted` | Task marked as completed | Workflow triggers (v2.1.32+) |
-| `WorktreeCreate` | Agent worktree created | Set up DB branch, install deps (v2.1.50+) |
-| `WorktreeRemove` | Agent worktree torn down | Clean up DB branch, temp credentials (v2.1.50+) |
-| `ConfigChange` | Config file changes during session | Enterprise audit, block unauthorized changes (v2.1.49+) |
-| `PreCompact` | Before context compaction | Save state before compaction (v2.1.50+) |
-| `PostToolUseFailure` | After a tool fails | Error logging, recovery actions |
+| Event | When It Fires | Can Block? | Use Case |
+|-------|---------------|------------|----------|
+| `SessionStart` | Session begins or resumes | No | Initialization, load dev context |
+| `UserPromptSubmit` | User submits prompt, before Claude processes it | Yes | Context enrichment, prompt validation |
+| `PreToolUse` | Before a tool call executes | Yes | Security validation, input modification |
+| `PermissionRequest` | Permission dialog appears | Yes | Custom approval logic |
+| `PostToolUse` | After a tool completes successfully | No | Formatting, logging |
+| `PostToolUseFailure` | After a tool call fails | No | Error logging, recovery actions |
+| `Notification` | Claude sends notification | No | Sound alerts, custom notifications |
+| `SubagentStart` | Sub-agent spawned | No | Subagent initialization |
+| `SubagentStop` | Sub-agent finishes | Yes | Subagent cleanup |
+| `Stop` | Claude finishes responding | Yes | Post-response actions, continue loops |
+| `TeammateIdle` | Agent team member about to go idle | Yes | Team coordination, quality gates |
+| `TaskCompleted` | Task being marked as completed | Yes | Enforce completion criteria |
+| `ConfigChange` | Config file changes during session | Yes (except policy) | Enterprise audit, block unauthorized changes |
+| `WorktreeCreate` | Worktree being created | Yes (non-zero exit) | Custom VCS setup |
+| `WorktreeRemove` | Worktree being removed | No | Clean up VCS state |
+| `PreCompact` | Before context compaction | No | Save state before compaction |
+| `SessionEnd` | Session terminates | No | Cleanup, logging |
 
 > **`Stop` and `SubagentStop` — `last_assistant_message` field (v2.1.47+)**: These events now include a `last_assistant_message` field in their JSON input, giving direct access to Claude's final response without parsing transcript files. Useful for orchestration pipelines that need to inspect or log the last output.
 >
@@ -8130,11 +8080,15 @@ gh pr create --title "..." --body "..."
 
 | Field | Description |
 |-------|-------------|
-| `matcher` | Regex pattern for which tools trigger hook |
+| `matcher` | Regex pattern filtering when hooks fire (tool name, session start reason, etc.) |
 | `type` | Hook type: `"command"`, `"prompt"`, or `"agent"` |
 | `command` | Shell command to run (for `command` type) |
-| `prompt` | Prompt text for LLM evaluation (for `prompt`/`agent` types) |
+| `prompt` | Prompt text for LLM evaluation (for `prompt`/`agent` types). Use `$ARGUMENTS` as placeholder for hook input JSON |
 | `timeout` | Max execution time in seconds (default: 600s command, 30s prompt, 60s agent) |
+| `model` | Model to use for evaluation (for `prompt`/`agent` types). Defaults to a fast model |
+| `async` | If `true`, runs in background without blocking (for `command` type only) |
+| `statusMessage` | Custom spinner message displayed while hook runs |
+| `once` | If `true`, runs only once per session then is removed (skills only) |
 
 **Hook types:**
 
@@ -8144,37 +8098,62 @@ gh pr create --title "..." --body "..."
 
 ### Hook Input (stdin JSON)
 
-Hooks receive JSON on stdin:
+Hooks receive JSON on stdin with common fields (all events) plus event-specific fields:
 
 ```json
 {
+  "session_id": "abc123",
+  "transcript_path": "/home/user/.claude/projects/.../transcript.jsonl",
+  "cwd": "/project",
+  "permission_mode": "default",
+  "hook_event_name": "PreToolUse",
   "tool_name": "Bash",
   "tool_input": {
     "command": "git status"
-  },
-  "session_id": "abc123",
-  "cwd": "/project"
-}
-```
-
-### Hook Output
-
-Hooks can return JSON on stdout:
-
-```json
-{
-  "systemMessage": "Message shown to Claude",
-  "hookSpecificOutput": {
-    "additionalContext": "Extra information"
   }
 }
 ```
 
-**PreToolUse additionalContext** (v2.1.9+): PreToolUse hooks can inject context into Claude's prompt via `additionalContext`. This allows enriching Claude's understanding before tool execution:
+> **Common fields (all events)**: `session_id`, `transcript_path`, `cwd`, `permission_mode`, `hook_event_name`. Event-specific fields (like `tool_name` and `tool_input` for PreToolUse) are added on top.
+
+### Hook Output
+
+Hooks communicate results through exit codes and optional JSON on stdout. Choose one approach per hook: either exit codes alone, or exit 0 with JSON for structured control (Claude Code only processes JSON on exit 0).
+
+**Universal JSON fields** (all events):
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `continue` | `true` | If `false`, Claude stops processing entirely |
+| `stopReason` | none | Message shown to user when `continue` is `false` |
+| `suppressOutput` | `false` | If `true`, hides stdout from verbose mode |
+| `systemMessage` | none | Warning message shown to user |
+
+**Event-specific decision control** varies by event type:
+
+- **PreToolUse**: Uses `hookSpecificOutput` with `permissionDecision` (allow/deny/ask), `permissionDecisionReason`, `updatedInput`, `additionalContext`
+- **PostToolUse, Stop, SubagentStop, UserPromptSubmit, ConfigChange**: Uses top-level `decision: "block"` with `reason`
+- **TeammateIdle, TaskCompleted**: Exit code 2 only (no JSON decision control)
+- **PermissionRequest**: Uses `hookSpecificOutput` with `decision.behavior` (allow/deny)
+
+**PreToolUse blocking example** (preferred over exit code 2):
 
 ```json
 {
   "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "Destructive command blocked by hook"
+  }
+}
+```
+
+**PreToolUse context injection**:
+
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
     "additionalContext": "Current git branch: feature/auth. 3 uncommitted files."
   }
 }
@@ -8184,9 +8163,9 @@ Hooks can return JSON on stdout:
 
 | Code | Meaning | Result |
 |------|---------|--------|
-| `0` | Success | Allow operation |
-| `2` | Block | Prevent operation |
-| Other | Error | Log and continue |
+| `0` | Success | Allow operation, parse stdout for JSON output |
+| `2` | Blocking error | Prevent operation (for blocking events), stderr fed to Claude |
+| Other | Non-blocking error | Stderr shown in verbose mode (`Ctrl+O`), execution continues |
 
 ## 7.3 Hook Templates
 
@@ -8289,12 +8268,13 @@ exit 0
 
 INPUT=$(cat)
 TITLE=$(echo "$INPUT" | jq -r '.title // ""')
-BODY=$(echo "$INPUT" | jq -r '.body // ""')
+MESSAGE=$(echo "$INPUT" | jq -r '.message // ""')
+TYPE=$(echo "$INPUT" | jq -r '.notification_type // ""')
 
 # Determine sound based on content
-if [[ "$TITLE" == *"error"* ]] || [[ "$BODY" == *"failed"* ]]; then
+if [[ "$TITLE" == *"error"* ]] || [[ "$MESSAGE" == *"failed"* ]]; then
     SOUND="/System/Library/Sounds/Basso.aiff"
-elif [[ "$TITLE" == *"complete"* ]] || [[ "$BODY" == *"success"* ]]; then
+elif [[ "$TITLE" == *"complete"* ]] || [[ "$MESSAGE" == *"success"* ]]; then
     SOUND="/System/Library/Sounds/Hero.aiff"
 else
     SOUND="/System/Library/Sounds/Pop.aiff"
@@ -8399,12 +8379,12 @@ Create `.claude/hooks/notification.ps1`:
 
 $inputJson = [Console]::In.ReadToEnd() | ConvertFrom-Json
 $title = $inputJson.title
-$body = $inputJson.body
+$message = $inputJson.message
 
 # Determine sound based on content
-if ($title -match "error" -or $body -match "failed") {
+if ($title -match "error" -or $message -match "failed") {
     [System.Media.SystemSounds]::Hand.Play()
-} elseif ($title -match "complete" -or $body -match "success") {
+} elseif ($title -match "complete" -or $message -match "success") {
     [System.Media.SystemSounds]::Asterisk.Play()
 } else {
     [System.Media.SystemSounds]::Beep.Play()
@@ -8739,7 +8719,7 @@ Instead of configuring dozens of individual hooks, use a **single dispatcher** t
 INPUT=$(cat)
 TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name')
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // .tool_input.command // ""')
-EVENT=$(echo "$INPUT" | jq -r '.event // "unknown"')
+EVENT=$(echo "$INPUT" | jq -r '.hook_event_name // "unknown"')
 
 HOOKS_DIR="$(dirname "$0")/handlers"
 
@@ -8779,7 +8759,10 @@ exit 0
   "hooks": {
     "PostToolUse": [{
       "matcher": "Edit|Write|Bash",
-      "hooks": [".claude/hooks/dispatch.sh"]
+      "hooks": [{
+        "type": "command",
+        "command": ".claude/hooks/dispatch.sh"
+      }]
     }]
   }
 }
@@ -18595,7 +18578,7 @@ Team Lead (Main Session)
          └─ Teammate 2: Task B (independent context)
 
 Coordination: Git-based (task locking, continuous merge, conflict resolution)
-Navigation: Shift+Up/Down or tmux to switch between agents
+Navigation: Shift+Down to cycle through teammates, or tmux panes
 ```
 
 ### Teams vs Multi-Instance vs Dual-Instance
@@ -18701,7 +18684,7 @@ Source: [Paul Rayner LinkedIn](https://www.linkedin.com/posts/thepaulrayner_this
 ### Navigation Between Agents
 
 **Built-in controls**:
-- **Shift+Up/Down**: Switch between sub-agents
+- **Shift+Down**: Cycle through active teammates (in-process mode)
 - **tmux**: Use tmux commands if in tmux session
 - **Direct takeover**: Take control of any agent's work mid-execution
 
@@ -19120,15 +19103,30 @@ _Quick jump:_ [Commands Table](#101-commands-table) · [Keyboard Shortcuts](#102
 | `/stats` | View usage statistics with activity graphs | Info |
 | `/output-style` | Change response format (concise/detailed/code) | Display |
 | `/feedback` | Report bugs or send feedback to Anthropic | Support |
-| `/chrome` | Toggle native browser integration | Mode |
-| `/mcp` | Manage Model Context Protocol servers | Config |
-| `/plugin` | Manage Claude Code plugins | Config |
-| `/plan` | Enter Plan Mode | Mode |
-| `/execute` | Exit Plan Mode | Mode |
-| `/fast` | Toggle fast mode (Opus 4.6, 2.5x faster, 6x price) | Mode |
+| `/chrome` | Check Chrome connection, manage permissions | Mode |
+| `/config` | View and modify global settings | Config |
+| `/copy` | Copy last response to clipboard | Session |
 | `/debug` | Systematic troubleshooting and error investigation | Debug |
-| `/rewind` | Undo recent changes | Edit |
+| `/doctor` | Run diagnostics and troubleshooting checks | Debug |
+| `/execute` | Exit Plan Mode | Mode |
 | `/exit` | Exit Claude Code | Session |
+| `/fast` | Toggle fast mode (Opus 4.6, 2.5x faster, 6x price) | Mode |
+| `/hooks` | Interactive hook configuration | Config |
+| `/init` | Generate starter CLAUDE.md based on project structure | Config |
+| `/login` | Log in to Claude account | Auth |
+| `/logout` | Log out and re-authenticate | Auth |
+| `/mcp` | Manage Model Context Protocol servers | Config |
+| `/memory` | View and edit persistent context (CLAUDE.md files) | Config |
+| `/mobile` | Show App Store and Google Play download links | Info |
+| `/model` | Change model (with left/right arrows for effort slider) | Mode |
+| `/permissions` | Configure permission allowlists | Config |
+| `/plan` | Enter Plan Mode | Mode |
+| `/plugin` | Browse and install Claude Code plugins | Config |
+| `/remote-control` (`/rc`) | Start remote control session (Pro/Max only) | Mode |
+| `/rename` | Give current session a descriptive name | Session |
+| `/resume` | Resume a previous session (from within a session) | Session |
+| `/rewind` | Open rewind menu to undo recent changes | Edit |
+| `/sandbox` | Enable OS-level isolation | Config |
 | `Ctrl+D` | Exit Claude Code | Session |
 
 ### Quick Actions
@@ -19154,8 +19152,8 @@ _Quick jump:_ [Commands Table](#101-commands-table) · [Keyboard Shortcuts](#102
 | `Ctrl+R` | Search command history |
 | `Ctrl+L` | Clear screen (keeps context) |
 | `Ctrl+B` | Run command in background |
-| `Esc` | Dismiss current suggestion |
-| `Esc×2` (double-tap) | Rewind to previous checkpoint (same as `/rewind`) |
+| `Esc` | Stop Claude mid-action (context preserved) |
+| `Esc×2` (double-tap) | Open rewind menu (same as `/rewind`) |
 
 ### Input & Navigation
 
@@ -19164,9 +19162,25 @@ _Quick jump:_ [Commands Table](#101-commands-table) · [Keyboard Shortcuts](#102
 | `Ctrl+A` | Jump to beginning of line |
 | `Ctrl+E` | Jump to end of line |
 | `Ctrl+W` | Delete previous word |
-| `Ctrl+G` | Open external editor for long text |
+| `Ctrl+G` | Open plan in external text editor for editing |
 | `Tab` | Autocomplete file paths |
 | `↑` / `↓` | Navigate command history |
+
+### Mode & Model Toggles
+
+| Shortcut | Action |
+|----------|--------|
+| `Alt+T` (`Option+T` on macOS) | Toggle thinking mode on/off |
+| `Ctrl+O` | View thinking blocks |
+
+### Agent Teams Navigation
+
+| Shortcut | Action |
+|----------|--------|
+| `Shift+Down` | Cycle through active teammates (in-process mode) |
+| `Ctrl+T` | Toggle task list visibility |
+| `Enter` | View selected teammate's session |
+| `Escape` | Interrupt current turn, return to prompt |
 
 ### Useful Flag Combinations
 
@@ -19184,9 +19198,11 @@ _Quick jump:_ [Commands Table](#101-commands-table) · [Keyboard Shortcuts](#102
 
 | Location | Scope | Committed |
 |----------|-------|-----------|
-| `~/.claude/CLAUDE.md` | All projects | N/A |
-| `/project/CLAUDE.md` | This project | ✅ Yes |
-| `/project/.claude/CLAUDE.md` | Personal | ❌ No |
+| `~/.claude/CLAUDE.md` | All projects (global) | N/A |
+| `/project/CLAUDE.md` | This project (shared) | ✅ Yes |
+| `/project/CLAUDE.local.md` | This project (local overrides) | ❌ No (.gitignored) |
+| `/project/.claude/CLAUDE.md` | Personal project config | ❌ No |
+| Parent/child directories | Auto-loaded in monorepos | Depends on location |
 
 ### Settings Files
 
@@ -19296,7 +19312,7 @@ Use this symptom-based guide for rapid issue identification and resolution:
 2. Check connectivity: Try simple command → If fails, check network
 3. Check configuration: `claude mcp list` → Verify MCP servers
 4. Check permissions: Review error message → Add to allowedTools if needed
-5. Still failing: `claude doctor` → Verify system health
+5. Still failing: `/doctor` → Run diagnostics and verify system health
 
 ### Common Issues Reference
 
@@ -19830,9 +19846,7 @@ Use this agent when:
 ---
 name: skill-name
 description: Expert guidance for [domain]
-allowed-tools: Read, Grep, Bash
-context: fork
-agent: specialist
+allowed-tools: Read Grep Bash
 ---
 
 # Skill Name

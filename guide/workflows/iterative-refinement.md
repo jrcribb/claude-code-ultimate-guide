@@ -148,30 +148,21 @@ Stop early if improvement < 5% between iterations.
 
 ## Integration with Claude Code
 
-### With TodoWrite
+### With Task Tool
 
-Track refinement iterations:
+Track refinement iterations using `TaskCreate` and `TaskUpdate`:
 
 ```
-TodoWrite:
-- [x] Initial implementation
-- [x] Fix: handle empty arrays
-- [x] Fix: add input validation
-- [ ] Optimization: memoize expensive calculations
+TaskCreate: "Implement initial version"
+TaskCreate: "Fix: handle empty arrays"
+TaskCreate: "Fix: add input validation"
+TaskCreate: "Optimization: memoize expensive calculations"
+# Mark completed as you progress with TaskUpdate
 ```
 
 ### With Hooks
 
-Auto-validate after each change:
-
-```yaml
-# .claude/hooks.yaml
-post_edit:
-  - command: "npm run lint && npm test"
-    on_failure: "report"
-```
-
-Claude sees failures and can self-correct.
+Auto-validate after each change using Claude Code hooks (configured via `/hooks` command or `settings.json`). For example, a `PostToolUse` hook on the `Edit` tool can run linting and tests automatically. Claude sees failures and can self-correct.
 
 ### With /compact
 

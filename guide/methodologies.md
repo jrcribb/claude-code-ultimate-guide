@@ -94,7 +94,7 @@ Planning isn't optional for complex tasks. It's the difference between:
 
 **How plan-first works**:
 
-1. **Exploration phase** (`/plan` mode):
+1. **Exploration phase** (Plan Mode via `Shift+Tab`):
    - Claude reads files, explores architecture
    - No edits allowed → forces thinking before action
    - Proposes approach with trade-offs
@@ -104,7 +104,7 @@ Planning isn't optional for complex tasks. It's the difference between:
    - Easier to correct direction now vs after 100 lines written
    - Plan becomes contract for execution
 
-3. **Execution phase** (`/execute`):
+3. **Execution phase** (toggle back to Normal Mode with `Shift+Tab`):
    - Plan → code becomes mechanical translation
    - Fewer surprises, cleaner implementation
    - Faster overall despite "slower" start

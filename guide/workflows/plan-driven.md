@@ -28,7 +28,7 @@ Use `/plan` mode for anything non-trivial. Claude explores the codebase (read-on
 ## TL;DR
 
 ```
-1. /plan (or ask complex question)
+1. Enter Plan Mode (Shift+Tab twice) or ask complex question
 2. Claude explores codebase (read-only)
 3. Claude writes plan to .claude/plans/
 4. You review and approve
@@ -41,9 +41,10 @@ Use `/plan` mode for anything non-trivial. Claude explores the codebase (read-on
 
 ### Step 1: Enter Plan Mode
 
-Either use the slash command:
+Toggle Plan Mode with `Shift+Tab` (press twice to cycle Normal → Auto-Accept → Plan):
 ```
-/plan
+# Press Shift+Tab twice to enter Plan Mode
+# (Plan Mode indicator appears in the UI)
 ```
 
 Or ask a complex question that triggers plan mode automatically:
@@ -177,7 +178,7 @@ Plans are stored in `.claude/plans/` with auto-generated names.
 ### Plan + TDD
 
 ```
-/plan
+# Enter Plan Mode (Shift+Tab twice), then:
 
 I need to implement a rate limiter.
 Plan the test cases first, then the implementation.
@@ -188,18 +189,18 @@ Claude plans both tests and implementation in proper TDD order.
 ### Plan + Spec-First
 
 ```
-/plan
+# Enter Plan Mode (Shift+Tab twice), then:
 
 Review the Payment Processing spec in CLAUDE.md.
 Create an implementation plan that satisfies all acceptance criteria.
 ```
 
-### Plan + TodoWrite
+### Plan + Task Tool
 
-After plan approval, Claude can break down into todos:
+After plan approval, Claude can break down into tasks:
 
 ```
-Approved. Create a todo list from this plan and start implementing.
+Approved. Create tasks from this plan and start implementing.
 ```
 
 ---
@@ -209,12 +210,10 @@ Approved. Create a todo list from this plan and start implementing.
 ### Be Specific About Scope
 
 ```
-# Too vague
-/plan
+# Too vague (after entering Plan Mode via Shift+Tab twice)
 Improve the API
 
 # Better
-/plan
 Add pagination to the /users endpoint with cursor-based navigation.
 Maintain backwards compatibility with existing clients.
 ```
@@ -231,7 +230,7 @@ The plan looks good but:
 ### Use for Architecture Decisions
 
 ```
-/plan
+# Enter Plan Mode (Shift+Tab twice), then:
 
 I'm considering two approaches for state management:
 A) Redux Toolkit
@@ -254,11 +253,11 @@ Plans in `.claude/plans/` serve as decision documentation:
 > **Source**: Boris Tane, Engineering Lead @ Cloudflare — ["How I use Claude Code"](https://boristane.com/blog/how-i-use-claude-code/) (Feb 2026). 9 months of production usage.
 > **Confidence**: Tier 2 — Practitioner-validated pattern, not official Anthropic documentation.
 
-When `/plan` isn't enough — iterative human/agent planning before any code is written.
+When Plan Mode isn't enough, iterative human/agent planning before any code is written.
 
 ### Why Custom Plans Over /plan
 
-| Factor | /plan (native) | Custom .md plan |
+| Factor | Plan Mode (native) | Custom .md plan |
 |--------|----------------|-----------------|
 | **Persistence** | Lost on context compaction | Survives compaction, shareable |
 | **Review surface** | Chat-based, linear | Structured file, diffs |
@@ -266,7 +265,7 @@ When `/plan` isn't enough — iterative human/agent planning before any code is 
 | **Shared state** | Per-session | "Shared mutable state" between human and agent |
 | **Best for** | Standard features, <30 min tasks | Complex features, architectural decisions |
 
-**Decision rule**: Use `/plan` for known scope. Use custom `.md` plans when you expect misunderstandings or want explicit sign-off on approach before a single line of code.
+**Decision rule**: Use Plan Mode (Shift+Tab twice) for known scope. Use custom `.md` plans when you expect misunderstandings or want explicit sign-off on approach before a single line of code.
 
 ---
 

@@ -48,13 +48,23 @@ Hooks are scripts that execute automatically on Claude Code events. They enable 
 
 | Event | When | Typical Use Cases |
 |-------|------|-------------------|
+| `SessionStart` | Session begins or resumes | Initialization, environment setup, config scanning |
+| `UserPromptSubmit` | User sends a message | Context enrichment, preprocessing |
 | `PreToolUse` | Before a tool executes | Validation, blocking dangerous operations |
-| `PostToolUse` | After a tool executes | Formatting, logging, cleanup |
-| `UserPromptSubmit` | When user sends a message | Context enrichment, preprocessing |
-| `Notification` | When Claude sends a notification | Sound alerts, external notifications |
-| `SessionStart` | At session start | Initialization, environment setup |
-| `SessionEnd` | At session end | Cleanup, session summary |
+| `PermissionRequest` | Permission dialog appears | Custom approval logic |
+| `PostToolUse` | After a tool succeeds | Formatting, logging, cleanup |
+| `PostToolUseFailure` | After a tool fails | Error logging, recovery actions |
+| `Notification` | Claude sends a notification | Sound alerts, external notifications |
+| `SubagentStart` | Sub-agent spawns | Subagent initialization |
+| `SubagentStop` | Sub-agent finishes | Subagent cleanup |
 | `Stop` | Claude finishes responding | Post-response actions, state saving |
+| `TeammateIdle` | Agent teammate goes idle | Team coordination |
+| `TaskCompleted` | Task marked completed | Workflow triggers |
+| `ConfigChange` | Config file changes during session | Enterprise audit, block unauthorized changes |
+| `WorktreeCreate` | Agent worktree created | Set up DB branch, install deps |
+| `WorktreeRemove` | Agent worktree torn down | Clean up DB branch, temp credentials |
+| `PreCompact` | Before context compaction | Save state before compaction |
+| `SessionEnd` | Session terminates | Cleanup, session summary |
 
 ## Advanced Guardrails (NEW in v3.3.0)
 

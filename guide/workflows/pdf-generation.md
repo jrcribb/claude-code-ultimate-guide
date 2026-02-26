@@ -332,7 +332,7 @@ Create a Quarto extension for our company's document style:
 
 For complex documents:
 ```
-/plan
+[Press Shift+Tab to enter Plan Mode]
 
 I need to create a series of 5 technical whitepapers.
 Plan the structure:
@@ -344,13 +344,20 @@ Plan the structure:
 
 ### With Hooks
 
-Auto-generate PDF on save:
+Auto-generate PDF after edits using a PostToolUse hook:
 
-```yaml
-# .claude/hooks.yaml
-post_edit:
-  - pattern: "**/*.qmd"
-    command: "quarto render $FILE"
+```json
+// In .claude/settings.json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "command": "if echo \"$TOOL_INPUT\" | grep -q '.qmd'; then quarto render \"$FILE\"; fi"
+      }
+    ]
+  }
+}
 ```
 
 ---

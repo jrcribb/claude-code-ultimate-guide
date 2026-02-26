@@ -204,8 +204,8 @@ which mcp-server-sequential
 **Diagnosis**: Hook file naming or location issue.
 
 **Solution**:
-1. Verify hook is in `.claude/hooks/` or `~/.claude/hooks/`
-2. Check filename matches event: `PreToolUse.sh`, `PostToolUse.sh`
-3. Ensure hook is executable: `chmod +x hook.sh`
+1. Verify hooks are configured in `.claude/settings.json` or `~/.claude/settings.json`
+2. Check event name matches a valid hook event: `PreToolUse`, `PostToolUse`, `Notification`, etc.
+3. Ensure the command referenced in the hook exists and is executable
 
 $ARGUMENTS

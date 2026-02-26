@@ -214,17 +214,18 @@ Team Lead: "Review this PR for security issues"
 ### Navigation Between Agents
 
 **Built-in navigation**:
-- **Shift+Up/Down**: Switch between sub-agents in Claude Code interface
-- **tmux**: Use tmux commands if running in tmux session
+- **Shift+Down**: Cycle through teammates in in-process mode
+- **tmux/iTerm2**: Split pane mode with `teammateMode: "tmux"` (requires tmux or iTerm2 with `it2` CLI)
 - **Direct takeover**: You can take control of any agent's work when needed
 
 **Example**:
 ```bash
-# Terminal 1: Team lead
-claude --experimental-agent-teams
+# Terminal 1: Team lead (with env var set)
+export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
+claude
 
 # Claude spawns teammates automatically
-# You can navigate with Shift+Up/Down to inspect each agent
+# You can navigate with Shift+Down to cycle through teammates (in-process mode)
 ```
 
 ### Context Management
@@ -286,8 +287,8 @@ source ~/.bashrc
 
 ```json
 {
-  "experimental": {
-    "agentTeams": true
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   }
 }
 ```
@@ -311,9 +312,10 @@ source ~/.bashrc
 Claude should confirm:
 > "Yes, agent teams are enabled (experimental feature). I can spawn multiple agents to work in parallel when appropriate."
 
-**Alternative verification** (check settings):
+**Alternative verification** (check env var):
 ```bash
-cat ~/.claude/settings.json | grep agentTeams
+echo $CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS
+# Should output: 1
 ```
 
 ### Multi-Terminal Setup
@@ -323,15 +325,15 @@ cat ~/.claude/settings.json | grep agentTeams
 ```bash
 # Terminal 1: Research + bugfix
 export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
-claude --session research-bugfix
+claude
 
 # Terminal 2: Business ops
 export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
-claude --session business-ops
+claude
 
 # Terminal 3: Infrastructure
 export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
-claude --session infra-setup
+claude
 ```
 
 **Benefits**:
@@ -772,7 +774,7 @@ With messaging (built-in):
 Mitigation:
 - Agents can message each other via mailbox system
 - Team lead synthesizes findings after all agents complete
-- Human can interrupt and redirect agents mid-workflow (Shift+Up/Down)
+- Human can interrupt and redirect agents mid-workflow (Shift+Down to cycle teammates)
 - Design tasks with minimal inter-agent dependencies
 ```
 

@@ -284,10 +284,10 @@ openspec init
 /openspec:archive add-dark-mode     # Merge to specs
 ```
 
-### With /plan Mode
+### With Plan Mode
 
 ```
-/plan
+[Press Shift+Tab to enter Plan Mode]
 
 I need to implement the Payment Processing feature.
 Review the spec in CLAUDE.md and create an implementation plan.
@@ -501,14 +501,15 @@ Traditional specs use binary constraints (MUST/MUST NOT), but operational work r
 
 ### Mapping to Claude Code Permissions
 
-**Always → Auto-accept Mode** (Shift+Tab):
+**Always → Permission Allowlist**:
 ```json
+// In .claude/settings.json
 {
-  "allowedPrompts": {
-    "Bash": [
-      "run tests",
-      "format code",
-      "check types"
+  "permissions": {
+    "allow": [
+      "Bash(npm test*)",
+      "Bash(npx prettier*)",
+      "Bash(npx tsc*)"
     ]
   }
 }
@@ -520,11 +521,11 @@ Traditional specs use binary constraints (MUST/MUST NOT), but operational work r
 
 **Never → Plan Mode + Hooks**:
 ```bash
-# .claude/hooks/pre-tool-use.sh
+# Hook configured via settings.json (PreToolUse event)
 #!/bin/bash
-if [[ "$TOOL_USE_TOOL_NAME" == "Bash" ]] && [[ "$TOOL_USE_INPUT" =~ "git push origin main" ]]; then
-  echo "ERROR: Direct push to main blocked. Use feature branches."
-  exit 2  # Block the action
+if [[ "$TOOL_NAME" == "Bash" ]] && [[ "$INPUT" =~ "git push origin main" ]]; then
+  echo "BLOCKED: Direct push to main blocked. Use feature branches."
+  exit 2  # Send feedback to Claude (non-zero exit blocks the action)
 fi
 ```
 
