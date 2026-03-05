@@ -225,7 +225,7 @@ Model: Sonnet | Ctx: 89.5k | Cost: $2.11 | Ctx(u): 56.0%
 | **Plan Mode** | `Shift+Tab × 2` or `/plan` | Explore without modifying |
 | **OpusPlan** | `/model opusplan` | Opus for planning, Sonnet for execution |
 
-> **Opus 4.6**: Thinking is **ON by default at max budget**. Keywords like "think hard" or "ultrathink" are cosmetic only — they don't control depth.
+> **Opus 4.6** (v2.1.68+): Default effort = **medium** for Max/Team. Use `ultrathink` to force high effort for the next turn. "think hard" remains cosmetic.
 
 | Control | Action | Persistence |
 |---------|--------|-------------|
