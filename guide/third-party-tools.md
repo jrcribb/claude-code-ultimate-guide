@@ -375,23 +375,56 @@ A universal terminal frontend for AI coding agents. Supports Claude Code alongsi
 
 ### Conductor
 
-A macOS desktop app for orchestrating multiple Claude Code instances in parallel using git worktrees.
+A macOS desktop app for orchestrating multiple Claude Code (and Codex) instances in parallel using git worktrees, with integrated diff viewing, PR workflow, and GitHub automation.
 
 | Attribute | Details |
 |-----------|---------|
-| **Source** | [conductor.build](https://docs.conductor.build) |
-| **Install** | Download from [conductor.build](https://docs.conductor.build) |
+| **Source** | [conductor.build](https://conductor.build) |
+| **Docs** | [docs.conductor.build](https://docs.conductor.build) |
+| **Install** | Download from [conductor.build](https://conductor.build) |
 | **Platform** | macOS only (Windows/Linux planned) |
+| **Author** | Melty Labs |
 
-**Key features**:
+**Workspace management**:
 
-- Parallel Claude Code agents on separate git worktrees
-- Unified diff viewer for all agent changes
-- GitHub and Linear integration (inject issues as context)
-- MCP support and slash commands (`/research`)
-- Planning mode with bulk context injection
+- One workspace per feature/bugfix, created with `⌘⇧N` or from a GitHub issue or Linear issue directly
+- Workspaces organized by status: backlog → in progress → in review → done (v0.35.0)
+- Group workspaces across multiple repos in a single view (v0.35.2)
+- **Next Workspace** button (v0.36.4): jumps to the next workspace awaiting your input, so you never manually scan for blocked agents
+- Archive completed workspaces while preserving full chat history
 
-**Limitations**: macOS only (as of Feb 2026). Proprietary (not open source). Overlaps with multi-agent orchestration (see below).
+**Diff viewer & code editing**:
+
+- Integrated diff viewer in the chat panel, turn-by-turn diffs per agent message (v0.22.0)
+- Open diff with `⌘D`; navigate file-by-file without leaving Conductor
+- **Manual Mode** (v0.37.0): built-in file editor with syntax highlighting and `⌘F` search — covers quick edits without opening a separate IDE
+- Comment directly on diffs and send feedback to Claude (v0.10.0)
+
+**GitHub & CI integration**:
+
+- View GitHub Actions logs in the Checks tab (v0.33.2)
+- Failing CI checks forwarded automatically to Claude for fixes (v0.12.0)
+- Edit PR titles and descriptions directly in the Checks tab (v0.34.1)
+- Sync PR comments from GitHub to Conductor (v0.25.4)
+- Todos block workspace until checked off before merge (v0.28.4)
+- Create PR with `⌘⇧P`
+
+**Linear & other integrations**:
+
+- Attach Linear issues to messages or open a Conductor workspace directly from a Linear issue (v0.15.0, v0.36.5)
+- Deeplinks to Linear, Slack, VS Code within AI-generated responses
+- Mermaid diagram support with pan/zoom and fullscreen
+
+**Agent support**:
+
+- Claude Code (default) + Codex side by side (v0.18.0); keyboard-navigable model picker
+- Slash command autocomplete (e.g. `/restart` to restart Claude Code process)
+
+**Reported workflow pattern (community)**:
+
+Users working across 5+ parallel features on multiple repos report the following flow: create one workspace per feature (GitHub issue or Linear issue as context), let agents run, use the **Next Workspace** button to process only workspaces awaiting input, review diffs in-app, merge from the Checks tab. Reported combination with BMAD: one workspace per epic, one Claude agent for implementation and a second for the next story — described as a significant productivity multiplier for spec-driven development.
+
+**Limitations**: macOS only (as of Mar 2026). Proprietary (not open source). Overlaps with multi-agent orchestration tools listed below.
 
 ---
 
