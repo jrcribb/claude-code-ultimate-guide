@@ -3,8 +3,8 @@
 # Purpose: Track Claude Code product releases for documentation sync
 # Maintained: Manual updates when new releases are announced
 
-latest: "2.1.72"
-updated: "2026-03-11"
+latest: "2.1.74"
+updated: "2026-03-12"
 
 # ════════════════════════════════════════════════════════════════
 # RELEASES (newest first, condensed highlights only)
@@ -14,6 +14,28 @@ releases:
   # ─────────────────────────────────────────────────────────────
   # 2.1.x Series (January-March 2026)
   # ─────────────────────────────────────────────────────────────
+
+  - version: "2.1.74"
+    date: "2026-03-12"
+    highlights:
+      - "⭐ /context command now shows actionable suggestions (context-heavy tools, memory bloat, capacity warnings)"
+      - "⭐ Fixed memory leak in streaming API buffers — unbounded RSS growth on npm path resolved"
+      - "autoMemoryDirectory setting to configure custom directory for auto-memory storage"
+      - "Fixed managed policy ask rules being bypassed by user allow rules or skill allowed-tools"
+      - "Fixed MCP OAuth hanging on callback port conflict; fixed Slack refresh token never re-prompting"
+      - "Fixed SessionEnd hooks killed after 1.5s regardless of hook.timeout (now configurable)"
+    breaking: []
+
+  - version: "2.1.73"
+    date: "2026-03-11"
+    highlights:
+      - "⭐ modelOverrides setting: map model picker entries to custom provider model IDs (Bedrock ARNs etc.)"
+      - "Fixed deadlock when many skill files change at once (e.g. git pull in large .claude/skills/ repo)"
+      - "Fixed subagents with model: opus/sonnet/haiku being downgraded on Bedrock/Vertex/Foundry"
+      - "Fixed SessionStart hooks firing twice when resuming via --resume or --continue"
+      - "Changed default Opus model on Bedrock, Vertex, Foundry to Opus 4.6 (was 4.1)"
+      - "Deprecated /output-style — use /config instead; output style fixed at session start for prompt caching"
+    breaking: []
 
   - version: "2.1.72"
     date: "2026-03-09"

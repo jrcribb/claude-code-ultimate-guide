@@ -10,13 +10,13 @@ tags: [reference, release]
 > **Full details**: [github.com/anthropics/claude-code/CHANGELOG.md](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md)
 > **Machine-readable**: [claude-code-releases.yaml](../machine-readable/claude-code-releases.yaml)
 
-**Latest**: v2.1.72 | **Updated**: 2026-03-11
+**Latest**: v2.1.74 | **Updated**: 2026-03-12
 
 ---
 
 ## Quick Jump
 
-- [2.1.x Series (January-March 2026)](#21x-series-january-march-2026) — Worktree isolation, background agents, ConfigChange hook, Fast mode Opus 4.6, 1M context, claude.ai MCP connectors, remote-control, auto-memory, /copy command, HTTP hooks, worktree config sharing, ultrathink re-introduced, InstructionsLoaded hook, 4 security fixes, Agent model override restored, 12x SDK token cost reduction
+- [2.1.x Series (January-March 2026)](#21x-series-january-march-2026) — Worktree isolation, background agents, ConfigChange hook, Fast mode Opus 4.6, 1M context, claude.ai MCP connectors, remote-control, auto-memory, /copy command, HTTP hooks, worktree config sharing, ultrathink re-introduced, InstructionsLoaded hook, 4 security fixes, Agent model override restored, 12x SDK token cost reduction, /context actionable suggestions, modelOverrides setting
 - [2.0.x Series (Nov 2025 - Jan 2026)](#20x-series-november-2025---january-2026) — Opus 4.5, Claude in Chrome, Background agents
 - [Breaking Changes Summary](#breaking-changes-summary)
 - [Milestone Features](#milestone-features)
@@ -24,6 +24,36 @@ tags: [reference, release]
 ---
 
 ## 2.1.x Series (January-March 2026)
+
+### v2.1.74 (2026-03-12)
+
+- **New**: `/context` command shows actionable suggestions — identifies context-heavy tools, memory bloat, capacity warnings with optimization tips
+- **New**: `autoMemoryDirectory` setting to configure custom directory for auto-memory storage
+- **Fixed**: Memory leak in streaming API response buffers — unbounded RSS growth on Node.js/npm path resolved
+- **Fixed**: Managed policy `ask` rules being bypassed by user `allow` rules or skill `allowed-tools`
+- **Fixed**: MCP OAuth authentication hanging when callback port is already in use
+- **Fixed**: MCP OAuth refresh (Slack) never prompting re-auth after refresh token expires
+- **Fixed**: Voice mode on macOS native binary — binary now includes `audio-input` entitlement for microphone permission prompt
+- **Fixed**: `SessionEnd` hooks killed after 1.5s regardless of `hook.timeout` (now configurable via `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS`)
+- **Changed**: `--plugin-dir` local dev copies now override installed marketplace plugins with same name
+- **VSCode**: Fixed delete button not working for Untitled sessions
+
+### v2.1.73 (2026-03-11)
+
+- **New**: `modelOverrides` setting — map model picker entries to custom provider model IDs (Bedrock inference profile ARNs, etc.)
+- **New**: Actionable guidance when OAuth login or connectivity checks fail due to SSL certificate errors (corporate proxies, `NODE_EXTRA_CA_CERTS`)
+- **Fixed**: Freezes and 100% CPU loops triggered by permission prompts for complex bash commands
+- **Fixed**: Deadlock when many skill files changed at once (e.g. `git pull` in repo with large `.claude/skills/` directory)
+- **Fixed**: Bash tool output lost when running multiple Claude Code sessions in the same project directory
+- **Fixed**: Subagents with `model: opus`/`sonnet`/`haiku` being silently downgraded on Bedrock, Vertex, Foundry
+- **Fixed**: Background bash processes from subagents not cleaned up when agent exits
+- **Fixed**: `SessionStart` hooks firing twice when resuming via `--resume` or `--continue`
+- **Fixed**: JSON-output hooks injecting no-op system-reminder messages into the model's context on every turn
+- **Fixed**: Linux sandbox failing with "ripgrep not found" on native builds
+- **Fixed**: Linux native modules on Amazon Linux 2 (glibc 2.26 systems)
+- **Changed**: Default Opus model on Bedrock, Vertex, Foundry → Opus 4.6 (was 4.1)
+- **Changed**: Deprecated `/output-style` — use `/config` instead; output style fixed at session start for better prompt caching
+- **VSCode**: Fixed HTTP 400 errors for users behind proxies or on Bedrock/Vertex with Claude 4.5 models
 
 ### v2.1.72 (2026-03-09)
 

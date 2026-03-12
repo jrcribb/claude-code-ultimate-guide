@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [3.34.4] - 2026-03-12
+
+### Documentation
+
+- **Claude Code Releases**: Updated tracking to v2.1.74 (2026-03-12)
+  - v2.1.74: `/context` actionable suggestions, `autoMemoryDirectory` setting, memory leak fix in streaming buffers, managed policy `ask` rules bypass fix, `SessionEnd` hook timeout fix
+  - v2.1.73: `modelOverrides` setting, deadlock fix for skill hot-reload, subagent model downgrade fix on Bedrock/Vertex/Foundry, Opus 4.6 as default on 3P providers, `/output-style` deprecated
+
 ## [3.34.3] - 2026-03-11
 
 ### Added
