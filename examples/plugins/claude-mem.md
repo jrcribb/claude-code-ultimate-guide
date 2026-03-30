@@ -9,6 +9,7 @@ tags: [plugin, memory, integration]
 **Purpose**: Automatic persistent memory across Claude Code sessions
 **Repository**: https://github.com/thedotmack/claude-mem
 **Type**: Official plugin (26.5k+ stars)
+**Version**: v10.6.3
 **License**: AGPL-3.0 + PolyForm Noncommercial
 
 ---
@@ -46,6 +47,9 @@ claude
 ### Manual Installation
 
 ```bash
+# Requires Bun runtime (not Node) — install first if needed:
+# curl -fsSL https://bun.sh/install | bash
+
 # Clone repository
 git clone https://github.com/thedotmack/claude-mem.git ~/.claude/plugins/claude-mem
 
@@ -55,6 +59,8 @@ bun install
 
 # Restart Claude Code
 ```
+
+> **Dependency**: claude-mem's worker runs on [Bun](https://bun.sh), not Node. If you only have Node installed, install Bun first. Without it, the worker won't start and sessions won't be captured (fail-open — Claude Code continues working, just without memory capture).
 
 ---
 
@@ -68,7 +74,7 @@ claude-mem works **out of the box** with sensible defaults:
 {
   "worker": {
     "port": 37777,
-    "host": "localhost"
+    "host": "127.0.0.1"
   },
   "storage": {
     "location": "~/.claude-mem/claude-mem.db",
@@ -83,6 +89,8 @@ claude-mem works **out of the box** with sensible defaults:
   }
 }
 ```
+
+> ⚠️ **Security**: Always use `host: "127.0.0.1"`, never `"0.0.0.0"`. The `GET /api/settings` endpoint returns API keys in plain text — any local process (browser extension, npm package) can read it. Localhost-only binding reduces the attack surface but does not eliminate it on shared machines.
 
 ### Custom Configuration
 
@@ -151,7 +159,19 @@ Claude: [Already has context, no re-reading]
 
 ---
 
-### Natural Language Search (Skill)
+### Available Skills
+
+claude-mem ships 5 skills accessible via `/claude-mem:<skill>`:
+
+| Skill | Trigger | Use case |
+|-------|---------|----------|
+| `mem-search` | "How did we fix X?" | Search session history by natural language |
+| `smart-explore` | "Explore the auth module" | AST-based code navigation (token-efficient) |
+| `make-plan` | "Plan a refactor of Y" | Phased implementation plan with doc discovery |
+| `do` | "Execute the plan" | Runs a `make-plan` output via sub-agents |
+| `timeline-report` | "Show my journey" | Narrative report of full project history |
+
+### Natural Language Search (`mem-search` Skill)
 
 Search your session history using natural language:
 
@@ -165,7 +185,7 @@ Search your session history using natural language:
 
 The skill returns:
 - Matching sessions with summaries
-- Relevant observations
+- Relevant observations (typed: DISCOVERY / CHANGE / FEATURE / BUGFIX)
 - File modification history
 - Architectural decisions
 
@@ -317,15 +337,29 @@ curl -X POST http://localhost:37777/api/import \
 
 ### API Compression Costs
 
-| Usage Level | Sessions/Month | Observations | Est. Cost |
-|-------------|----------------|--------------|-----------|
-| **Light** | 10-20 | 200-400 | $0.30-0.60 |
-| **Medium** | 50-80 | 1000-1600 | $1.50-2.40 |
-| **Heavy** | 100-150 | 2000-3000 | $3.00-4.50 |
+| Usage Level | Sessions/Month | Observations | Est. Cost (Claude Haiku) | Est. Cost (Gemini Lite) |
+|-------------|----------------|--------------|--------------------------|-------------------------|
+| **Light** | 10-20 | 200-400 | $0.30-0.60 | ~$0.05 |
+| **Medium** | 50-80 | 1000-1600 | $1.50-2.40 | ~$0.20 |
+| **Heavy** | 100-150 | 2000-3000 | $3.00-4.50 | ~$0.45 |
+| **Very heavy** | ~400 sessions | ~8000 | ~$102 | ~$14 |
 
-**Formula**: ~$0.15 per 100 observations processed
+**Formula**: ~$0.15 per 100 observations (Claude Haiku) vs ~$0.02 (Gemini 2.5 Flash Lite)
 
-**Reducing costs**:
+**Switch to Gemini for -86% cost**:
+
+```json
+// ~/.claude-mem/settings.json
+{
+  "provider": "gemini",
+  "model": "gemini-2.5-flash-lite",
+  "auth_method": "cli"
+}
+```
+
+> **Flash vs Flash Lite tradeoff**: Gemini 2.5 Flash Lite costs less but generates weaker summaries. For most projects this is acceptable. For complex long-running projects where injected context precision matters, consider Gemini 2.5 Flash (non-Lite).
+
+**Reducing costs further (batching)**:
 
 ```json
 {
@@ -505,6 +539,6 @@ If using in commercial product:
 
 ---
 
-**Template Version**: 1.0.0
-**Last Updated**: 2026-02-10
-**Guide Version**: 3.24.0
+**Template Version**: 1.1.0
+**Last Updated**: 2026-03-30
+**Guide Version**: 3.38.1

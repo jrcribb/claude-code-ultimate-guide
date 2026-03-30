@@ -1912,6 +1912,28 @@ Claude Code has three distinct memory systems. Understanding the difference is c
 - **Persistent memory (Serena)**: Structured key-value store for architectural decisions across many projects
 - **CLAUDE.md**: Team conventions, project structure (versioned with git)
 
+**Auto-compact and PostToolUse memory capture — a conflict to know about**:
+
+Claude Code auto-compacts the conversation at ~80% context usage by default. If you use a hook-based memory capture tool (like claude-mem) that saves session history via `PostToolUse`, auto-compact can fire and discard conversation history **before** the save pipeline has a chance to capture it.
+
+Two ways to handle this:
+
+```json
+// Option 1: disable auto-compact in your project settings.json
+// (you manage compaction manually via /compact)
+{
+  "autoCompactEnabled": false
+}
+```
+
+```bash
+# Option 2: keep auto-compact on, but set your tool's save threshold
+# to trigger well below 80% (e.g., at 60% context usage)
+# — check your memory plugin's cooldowns/threshold config
+```
+
+Option 1 gives full control but requires discipline. Option 2 is safer if you forget to compact manually. The general guide advice (use `/compact` proactively at 75%) still applies — auto-compact disabled just means you own the timing.
+
 ### Fresh Context Pattern (Ralph Loop)
 
 #### The Problem: Context Rot
@@ -11098,14 +11120,43 @@ Run this before starting any refactor touching a function used in 3+ places — 
 **Architecture**:
 
 ```
-Lifecycle Hooks → Capture observations → AI compression (Claude)
-                                              ↓
-                                     SQLite storage
-                                              ↓
-                               Chroma vector indexation
-                                              ↓
-                               Session start auto-injection
+Session Lifecycle (hooks → worker → storage):
+
+┌─────────────────────┬──────────────────────────┬──────────────────────────────────────┐
+│ Moment              │ Hook                     │ Action                               │
+├─────────────────────┼──────────────────────────┼──────────────────────────────────────┤
+│ Session starts      │ SessionStart             │ Worker boots, injects last N sessions│
+│ First prompt        │ UserPromptSubmit         │ Creates/identifies current session   │
+│ After each tool use │ PostToolUse (matcher: *) │ Captures typed observation           │
+│ End of response     │ Stop                     │ Generates LLM summary                │
+│ Session ends        │ SessionEnd               │ Marks session complete               │
+└─────────────────────┴──────────────────────────┴──────────────────────────────────────┘
+
+Worker Pipeline (Bun, port 37777):
+
+  Claude Code tool call
+         │
+         ▼
+  LLM analysis (Gemini 2.5 Flash Lite)
+         │
+         ├── type: DISCOVERY / CHANGE / FEATURE / BUGFIX
+         ├── facts: files touched, patterns detected
+         └── narrative: generated summary
+         │
+         ▼
+  SQLite (~/.claude-mem/claude-mem.db)
+         ├── [optional] Chroma vector search (port 8000, fallback: SQLite FTS)
+         └── Web UI at localhost:37777 + MCP skills
 ```
+
+**Observation Types**:
+
+| Type | When generated | Example |
+|------|---------------|---------|
+| `DISCOVERY` | Reading/exploring code | "Explored auth module, found JWT in validateToken()" |
+| `CHANGE` | File edits | "Modified session.middleware.ts: added refresh logic" |
+| `FEATURE` | New functionality | "Implemented OAuth2 flow in auth.service.ts" |
+| `BUGFIX` | Bug corrections | "Fixed null pointer in UserController.getById()" |
 
 **Installation**:
 
@@ -11122,7 +11173,17 @@ Lifecycle Hooks → Capture observations → AI compression (Claude)
 
 Once installed, claude-mem works **automatically**—no manual commands needed. It captures all tool operations and injects relevant context at session start.
 
-**Natural Language Search** (via skill):
+**Available Skills** (`/claude-mem:*`):
+
+| Skill | Purpose |
+|-------|---------|
+| `mem-search` | Search session history: "How did we solve the CORS issue?" |
+| `smart-explore` | AST-based codebase exploration (token-efficient, avoids full file reads) |
+| `make-plan` | Creates a phased implementation plan with doc discovery |
+| `do` | Executes a plan created by `make-plan` via sub-agents |
+| `timeline-report` | Generates a "Journey Into [Project]" narrative over full history |
+
+**Natural Language Search** (via `mem-search` skill):
 
 ```bash
 # Search your session history
@@ -11176,6 +11237,12 @@ API key: sk-1234567890abcdef
 <!-- claude-mem excludes <private> content from storage -->
 ```
 
+**Security Warning**:
+
+> ⚠️ `GET /api/settings` returns your API keys in plain text. Any process running on your machine (browser extension with localhost access, npm package, another CLI tool) can read this endpoint without authentication. Localhost is not a security boundary.
+>
+> **Mitigation**: Set `host: "127.0.0.1"` (not `"0.0.0.0"`) in your config. Never run on a shared machine or expose the port to your network. Consider using CLI auth (`auth_method: cli`) instead of storing keys in settings.json.
+
 **Cost Considerations**:
 
 | Aspect | Cost | Notes |
@@ -11188,19 +11255,26 @@ API key: sk-1234567890abcdef
 
 **Cost optimization — use Gemini instead of Claude for compression**:
 
-By default, claude-mem uses Claude (Haiku) for AI summarization. You can configure Gemini 2.5 Flash instead for significant cost savings:
+By default, claude-mem uses Claude (Haiku) for AI summarization. You can configure Gemini 2.5 Flash Lite instead for significant cost savings:
 
 ```bash
-# In claude-mem dashboard settings (localhost:37777)
-# Set compression model to: gemini-2.5-flash
+# In ~/.claude-mem/settings.json
+{
+  "provider": "gemini",
+  "model": "gemini-2.5-flash-lite",
+  "auth_method": "cli"
+}
 ```
 
-| Model | Cost/month (~400 sessions) | Savings |
-|-------|---------------------------|---------|
-| Claude Haiku (default) | ~$102 | — |
-| Gemini 2.5 Flash | ~$14 | **-86%** |
+| Model | Cost/month (~400 sessions) | Quality | Savings |
+|-------|---------------------------|---------|---------|
+| Claude Haiku (default) | ~$102 | High | — |
+| Gemini 2.5 Flash | ~$14 | Good | **-86%** |
+| Gemini 2.5 Flash Lite | ~$14 | Adequate | **-86%** |
 
-Gemini 2.5 Flash produces comparable compression quality at a fraction of the cost. If you're running claude-mem at scale, this is the single highest-ROI configuration change.
+> **Flash vs Flash Lite**: Flash Lite is cheaper but produces weaker compressions. Context injected at session start will be less precise. For most users the tradeoff is acceptable; for complex multi-week projects, consider Gemini 2.5 Flash (non-Lite) to preserve compression quality.
+
+If you're running claude-mem at scale, switching to Gemini is the single highest-ROI configuration change.
 
 **Critical installation gotcha — hooks coexistence**:
 
@@ -11287,10 +11361,10 @@ User: "Add tests for auth refactoring"
 Claude: [Full context of decisions and changes]
 ```
 
-**Stats** (verified 2026-02-10):
+**Stats** (updated 2026-03-30):
 - **26.5k GitHub stars**, 1.8k forks
-- **181 releases**, 46 contributors
-- Latest: v9.1.1 (Feb 7, 2026)
+- 46 contributors
+- Latest: v10.6.3
 - License: AGPL-3.0 + PolyForm Noncommercial
 
 > **Sources**:

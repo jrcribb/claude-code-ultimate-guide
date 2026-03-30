@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Documentation
+
+- **auto-compact + memory capture conflict**: Added note in Session vs. Persistent Memory section explaining that `autoCompactEnabled: false` is required for PostToolUse-based capture tools (claude-mem etc.) to avoid losing history mid-session; includes two mitigation options
+- **claude-mem**: Updated all coverage to v10.6.3 (up from v9.1.1)
+  - `guide/ultimate-guide.md` Section 8.2: expanded architecture diagram with full session lifecycle table, observation type taxonomy (DISCOVERY/CHANGE/FEATURE/BUGFIX), skills table (mem-search/smart-explore/make-plan/do/timeline-report)
+  - Added security warning: `GET /api/settings` exposes API keys in plain text — localhost-only mitigation explained
+  - Fixed Gemini model name: "Flash" → "Flash Lite" with Flash vs Flash Lite quality tradeoff note
+  - `examples/plugins/claude-mem.md`: added Bun runtime dependency note, skills table, security callout on default config, updated cost tables with Gemini Lite column
+  - `docs/resource-evaluations/claude-mem-evaluation.md`: updated version stats to v10.6.3
+
 ## [3.38.1] - 2026-03-30
 
 ### Security
