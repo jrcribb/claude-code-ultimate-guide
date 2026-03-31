@@ -835,8 +835,8 @@ Claude: [Continues with full context of Day 1 work]
 - **Descriptive final messages**: End sessions with context ("Ready for testing") so you remember the state when resuming
 - **Proactive context management**: Monitor with `/status` and use research-backed thresholds:
   - **< 70%**: Optimal — full reasoning capacity
-  - **75%**: Auto-compact triggers — Claude Code compresses automatically
-  - **85%**: Manual handoff recommended — start a [session handoff](#session-handoffs) before auto-compact degrades quality ([research-backed](../core/architecture.md#auto-compaction))
+  - **75%**: Good time to `/compact` manually — before quality degrades
+  - **85%**: Auto-compact territory — Claude Code will compress automatically once remaining context drops below its fixed buffer (~6-7% of window). Manual handoff recommended before this point ([research-backed](../core/architecture.md#auto-compaction))
   - **95%**: Force handoff — severe quality degradation, reset immediately
 - **Session naming**: Use `/rename` to give sessions descriptive names — critical when running multiple sessions in parallel (see [Auto-Rename Pattern](#session-auto-rename) below)
 
@@ -1914,7 +1914,9 @@ Claude Code has three distinct memory systems. Understanding the difference is c
 
 **Auto-compact and PostToolUse memory capture — a conflict to know about**:
 
-Claude Code auto-compacts the conversation at ~80% context usage by default. If you use a hook-based memory capture tool (like claude-mem) that saves session history via `PostToolUse`, auto-compact can fire and discard conversation history **before** the save pipeline has a chance to capture it.
+Claude Code auto-compacts the conversation when the remaining context drops below a fixed buffer threshold (roughly the last 6-7% of the context window, or about 13K tokens from the effective limit). In practice, this triggers somewhere in the 90-95% usage range depending on the model's context window and reserved output tokens. Before full compaction runs, Claude Code also applies **micro-compaction** — a lighter pass that selectively compresses older tool results (file reads, bash outputs, search results) to free space incrementally without summarizing the whole conversation. If auto-compact fails (e.g., due to a rate limit), it retries up to 3 consecutive times before giving up for that session.
+
+If you use a hook-based memory capture tool (like claude-mem) that saves session history via `PostToolUse`, auto-compact can fire and discard conversation history **before** the save pipeline has a chance to capture it.
 
 Two ways to handle this:
 
@@ -2836,6 +2838,16 @@ Claude Code supports six model aliases via `/model` (each always resolves to the
 | `opusplan` | Opus (plan) + Sonnet (act) | Hybrid intelligence |
 
 Model can also be set via `claude --model <alias>`, `ANTHROPIC_MODEL` env var, or `"model"` in settings.json. Priority: `/model` > `--model` flag > `ANTHROPIC_MODEL` > settings.json.
+
+**Knowledge cutoffs** (what each model knows about):
+
+| Model | Knowledge Cutoff |
+|-------|-----------------|
+| Claude Sonnet 4.6 | August 2025 |
+| Claude Opus 4.6 | May 2025 |
+| Claude Haiku 4.5 | February 2025 |
+
+Claude Code injects the cutoff date for the active model into the system prompt at the start of each session. You can ask Claude directly — "what's your knowledge cutoff?" — to confirm which date applies to your current session.
 
 ### OpusPlan Mode
 
@@ -4105,6 +4117,8 @@ Claude Code has 8 core tools:
 | `Glob` | Find files by pattern |
 | `Task` | Spawn sub-agents (isolated context) |
 | `TodoWrite` | Track progress (legacy, see below) |
+
+**How tool execution works**: Claude Code can start executing tools marked as concurrency-safe (read-only operations like `Read`, `Grep`, `Glob`) while the model is still generating its response, reducing total turn time. Non-concurrent tools (writes, bash commands) wait for the response to complete and run serially. When multiple read-only tools appear in a single response, they run in parallel — up to 10 concurrent by default.
 
 ### Task Management System
 
