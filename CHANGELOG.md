@@ -8,10 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- **WP01 update (v3.27.6 → v3.38.1)**: Updated both FR (`01-prompts-efficaces.qmd`) and EN (`01-effective-prompts.qmd`) whitepapers to integrate v3.37.0–v3.38.1 changes: new slash commands (`/investigate`, `/qa`, `/canary`, `/land-and-deploy`, `/review-pr` enhanced, `/session-save`), `/loop` and `/branch` workflow tools, `effort` frontmatter field for skills/commands, and `showThinkingSummaries: false` default note in Thinking Modes section. Added "New Workflows v3.37+" section in both files.
+
 - **`/audit-whitepapers` command**: New diagnostic command that audits all whitepapers (FR + EN) and recap cards (FR + EN) for version freshness, FR/EN parity, and metadata quality. Scores each document out of 100 across 4 phases (version gap 40pts, content staleness 20pts, parity 20pts, metadata 20pts) with A-F grading. Supports `--fix` (frontmatter patch suggestions), `--verbose` (all criteria), `--wp-only`, `--cards-only`. Feeds into `/update-whitepapers` for systematic updates.
 
 ### Fixed
 
+- **Cache bugs audit — Bug 2 root cause corrected** (2026-04-01): JSONL writer strips DTD records before write (not position mismatch on restore); severity upgraded HIGH with concrete session data (87-118K tokens/resume, 300-400K/session at 3-4 resumes). Engineering fix redirected to the writer. Updated in `check-cache-bugs.md`, `known-issues.md`, `claudedocs/cache-bugs-audit-2026-03-31.md`.
+- **ultimate-guide.md — prompt caching section**: Added "Known cache bugs (v2.1.69+)" callout with workarounds for Bug 2 (avoid --resume) and Bug 3 (CLAUDE_CODE_ATTRIBUTION_HEADER=false), link to known-issues.md and /check-cache-bugs.
 - **check-cache-bugs command**: Added missing YAML frontmatter (`name` + `description` fields) — command was not recognized by Claude Code slash command system (reported by genesiscz in CC#40524)
 - **check-cache-bugs + known-issues: Bug 2 mechanism corrected** (per fivedollarfridays CC#40524): root cause is session JSONL writer stripping `deferred_tools_delta` records before write, not position mismatch on restore. On --resume, full DTD re-announcement shifts all message positions → 0% cache ratio on every resume. Concrete evidence: 87-118K tokens rebuilt per resume, 300-400K/session with 3-4 resumes. Severity upgraded from MEDIUM to HIGH.
 - **known-issues + check-cache-bugs: Bug 3 severity recalibrated** (per jmarianski, original RE analyst): "marginal impact" on session tokens in practice — system prompt is small relative to total context. Bug 2 has larger measurable cost for heavy users.
@@ -27,11 +31,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - **Streaming tool execution**: Added note explaining that concurrency-safe tools (Read, Grep, Glob) can start executing while the model is still generating, and run in parallel (up to 10 concurrent)
   - **Internal reference**: Created `claudedocs/source-code-analysis-2026-03-31.md` (gitignored) with full findings from 6-agent source analysis covering 512K lines — serves as future documentation reference when features ship officially
 
-- **CC release v2.1.88**: Updated Claude Code releases tracking to v2.1.88
+- **CC release v2.1.89**: Updated Claude Code releases tracking to v2.1.89 (previous session incorrectly labeled this v2.1.88; v2.1.88 does not appear in release notes)
+  - `"defer"` permission decision for `PreToolUse` hooks — headless pause + `-p --resume` re-evaluation
   - PermissionDenied hook for auto mode classifier denials (return `{retry: true}` to retry)
-  - Named subagents in `@` mention typeahead suggestions
-  - Thinking summaries now off by default (`showThinkingSummaries: true` to restore)
-  - Massive bugfix batch: CRLF on Windows, StructuredOutput cache (50% failure rate), memory leaks, crashes, voice mode, hooks `if` filtering
+  - `CLAUDE_CODE_NO_FLICKER=1` env var for flicker-free alt-screen rendering
+  - Named subagents in `@` mention typeahead; `MCP_CONNECTION_NONBLOCKING=true` for `-p` mode
+  - **Breaking**: Thinking summaries now off by default (`showThinkingSummaries: true` to restore)
+  - Massive bugfix batch: CRLF on Windows, StructuredOutput cache (50% failure rate), memory leaks, crashes, voice mode, autocompact thrash circuit breaker
 
 ### Meta
 

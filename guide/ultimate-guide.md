@@ -2367,6 +2367,15 @@ No dedicated monitoring tool exists specifically for Claude Code session cache m
 - Avoid dynamic content in stable sections (dates, random values, per-request context)
 - Larger CLAUDE.md = more expensive cache write, but also more tokens saved per read — profitable after ~2 hits
 
+**Known cache bugs (v2.1.69+)**
+
+Two active bugs silently break caching on v2.1.69+. Apply these workarounds immediately:
+
+- **--resume/--continue** causes a full cache rebuild (0% hit ratio) on every resume because session JSONL strips deferred tool records before write. Workaround: avoid `--resume` until fixed.
+- **Per-session billing header** injects a unique hash as the first system prompt block, causing a cold miss on every session start and subagent call. Workaround: `"CLAUDE_CODE_ATTRIBUTION_HEADER": "false"` in `~/.claude/settings.json`.
+
+See [Known Issues → Prompt Cache Bugs](../core/known-issues.md) and run `/check-cache-bugs` for a full audit.
+
 > Docs: [prompt caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching)
 
 #### Tracking Costs
