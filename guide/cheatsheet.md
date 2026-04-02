@@ -21,6 +21,7 @@ tags: [cheatsheet, reference]
 | Command | Action |
 |---------|--------|
 | `/help` | Contextual help |
+| `/powerup` | Interactive animated lessons teaching Claude Code features |
 | `/clear` | Reset conversation |
 | `/compact` | Free up context |
 | `/status` | Session state + context usage |

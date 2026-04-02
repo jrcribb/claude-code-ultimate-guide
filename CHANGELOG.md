@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Documentation
+
+- **`/powerup` documented across learning surfaces**: Added `/powerup` (interactive animated lessons, v2.1.90) to `guide/cheatsheet.md` (Essential Commands table), `guide/roles/learning-with-ai.md` (new "Start Here" subsection), `whitepapers/fr/09-apprendre-avec-ia.qmd` (Slash Commands pour l'Apprentissage), `whitepapers/en/09-learning-with-ai.qmd` (Slash Commands for Learning), `whitepapers/recap-cards/fr/01-commandes-essentielles.qmd` (Commandes Slash Core), and `landing/src/content/docs/guide/learning-with-ai.md` (Slash Commands for Learning).
+
+### Fixed
+
+- **Hooks documentation gaps (fact-checked vs official docs)**: Added missing `defer` value to `permissionDecision` options, added multi-hook precedence rule (`deny > defer > ask > allow`, v2.1.89+), clarified that exit code 2 silently discards stdout/JSON (only stderr is forwarded to Claude), and added a dedicated `defer` semantics block explaining its headless-only usage with `stop_reason: "tool_deferred"` and `--resume`.
+
 ## [3.38.1] - 2026-04-02
 
 ### Documentation

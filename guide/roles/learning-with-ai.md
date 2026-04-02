@@ -463,6 +463,10 @@ The hook asks: "What's ONE thing you learned this session?" and logs it automati
 
 Claude Code has specific features that support learning. Here's how to configure them.
 
+### Start Here: /powerup
+
+Before configuring anything, run `/powerup`. It's a built-in command that walks you through Claude Code's core features via interactive animated lessons — each one short, hands-on, and designed to show rather than tell. Start here if you've never done a structured onboarding of the tool.
+
 ### CLAUDE.md Configuration for Learning Mode
 
 Create this in your `CLAUDE.md`:
