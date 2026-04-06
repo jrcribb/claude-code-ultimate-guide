@@ -16,7 +16,7 @@ tags: [guide, reference, workflows, agents, hooks, mcp, security]
 
 **Last updated**: January 2026
 
-**Version**: 3.38.3
+**Version**: 3.38.6
 
 ---
 
@@ -48,6 +48,7 @@ If you only have 5 minutes, here's what you need to know:
 ```bash
 claude                    # Start Claude Code
 /help                     # Show all commands
+/powerup                  # Interactive lessons: CLAUDE.md, /rewind, memory, effort modes
 /status                   # Check context usage
 /compact                  # Compress context when >70%
 /clear                    # Fresh start
@@ -5339,7 +5340,7 @@ The `.claude/` folder is your project's Claude Code directory for memory, settin
 | Personal preferences | `CLAUDE.md` | ❌ Gitignore |
 | Personal permissions | `settings.local.json` | ❌ Gitignore |
 
-### 3.38.3 Version Control & Backup
+### 3.38.6 Version Control & Backup
 
 **Problem**: Without version control, losing your Claude Code configuration means hours of manual reconfiguration across agents, skills, hooks, and MCP servers.
 
@@ -16234,6 +16235,7 @@ exit 0  # Allow
   - Complex tasks: Leave thinking enabled (default in Opus 4.6)
   - `ultrathink` keyword forces high effort for the next turn specifically (re-introduced in v2.1.68)
 - Set `cleanupPeriodDays` in config to prune old sessions automatically
+- Re-enable thinking summaries if needed: add `"showThinkingSummaries": true` to settings.json (off by default in interactive sessions since v2.1.89)
 - Use `/compact` proactively when context reaches 70%
 - Block sensitive files with `permissions.deny` in settings.json
 - Monitor cost with `/status` and adjust model/thinking levels accordingly
@@ -24753,4 +24755,4 @@ We'll evaluate and add it to this section if it meets quality criteria.
 
 **Contributions**: Issues and PRs welcome.
 
-**Last updated**: January 2026 | **Version**: 3.38.3
+**Last updated**: January 2026 | **Version**: 3.38.6

@@ -160,6 +160,34 @@ Generates the full `guide/ultimate-guide.md` (~25K lines) as EPUB and/or PDF. Ou
 
 **Note**: Different from whitepaper EPUBs — this generates the full guide, not individual focused documents. `dist/` is gitignored.
 
+### French Guide Translation + Export
+
+`guide/ultimate-guide.fr.md` is a French translation of the full guide, generated via the Anthropic API.
+
+```bash
+# 1. Translate (or re-translate after updates)
+#    Resumes from .translation-cache/ if interrupted
+python3 scripts/translate-guide.py
+
+# 2. Preprocess for Quarto (strips links, escapes @citations, fixes lists)
+python3 scripts/preprocess-guide.py \
+  --input guide/ultimate-guide.fr.md \
+  --output whitepapers/guide-content-fr.md
+
+# 3. Render PDF (Bold Guy template, ~3.7 MB)
+cd whitepapers && quarto render guide-export-fr.qmd --to whitepaper-typst
+
+# 4. Render EPUB (optional)
+cd whitepapers && quarto render guide-export-fr.qmd --to epub
+```
+
+**Key files**:
+- `scripts/translate-guide.py` — chunked translation, claude-sonnet-4-6, retry x3, ~$3/run
+- `whitepapers/guide-export-fr.qmd` — QMD wrapper (lang: fr)
+- `whitepapers/guide-content-fr.md` — preprocessed content (gitignored, generated)
+
+**Known issue**: `strip_inline_toc` in preprocess-guide.py looks for EN headings — won't strip the FR TOC section, minor visual artifact only.
+
 ### Before Committing
 ```bash
 # Verify versions are synchronized

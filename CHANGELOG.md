@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [3.38.6] - 2026-04-06
+
+### Documentation
+
+- **1M context beta retirement deadline added** (`guide/core/claude-code-releases.md`): New row in the API Ecosystem breaking changes table — `context-1m-2025-08-07` beta header retired April 30, 2026 for Sonnet 4.5/4. Requests exceeding 200K tokens will error after that date; migrate to Sonnet 4.6 or Opus 4.6.
+
+- **`/powerup` added to Essential Commands** (`guide/ultimate-guide.md`): The interactive animated lessons command (v2.1.90) was absent from the main guide's Essential Commands bash block. Added after `/help` as both are discovery-oriented entry points.
+
+- **`showThinkingSummaries` note added** (`guide/ultimate-guide.md`): Documented that thinking summaries are off by default in interactive sessions since v2.1.89, with the opt-in path (`"showThinkingSummaries": true` in settings.json). Added near the `cleanupPeriodDays` settings reference.
+
+- **French translation pipeline documented** (`CLAUDE.md`): Added "French Guide Translation + Export" section covering `scripts/translate-guide.py` (Claude Haiku batch translation), `guide/ultimate-guide.fr.md` output, and related workflow.
+
 ### Added
 
 - **Threat database update v2.12.0** (`examples/commands/resources/threat-db.yaml`): 4 new CVEs (CVE-2026-5058 aws-mcp-server 0-day CVSS 9.8, CVE-2026-31951 LibreChat OAuth exfiltration, CVE-2026-34742 Go MCP SDK DNS rebinding, CVE-2026-5323 a11y-mcp SSRF), 1 new attack technique (T022 NomShub IDE remote tunnel persistence via indirect prompt injection in Cursor), 2 new scanning tools (SandyClaw dynamic sandbox + Semgrep MCP integration), 1 new defensive resource (arXiv 2604.03070 empirical study: 1,708 issues found across agent skill ecosystem), 9 new sources, 2 new minimum safe version entries (go-mcp-sdk 1.4.0, a11y-mcp 1.0.6).
@@ -20,7 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - **`examples/commands/check-cache-bugs.md`**: Updated to reflect Anthropic's fixes (Bug 1 fixed v2.1.91, Bug 2 fixed v2.1.90) and extended with ArkNill community findings (B4 microcompact silent context stripping, B5 tool result budget cap 200K). Output format now includes version-conditional FIXED status. Bug 3 (attribution header) still active — workaround unchanged.
 
-## [3.38.4] - 2026-04-04
+## [3.38.5] - 2026-04-04
 
 ### Documentation
 
