@@ -3,8 +3,8 @@
 # Purpose: Track Claude Code product releases for documentation sync
 # Maintained: Manual updates when new releases are announced
 
-latest: "2.1.96"
-updated: "2026-04-08"
+latest: "2.1.97"
+updated: "2026-04-09"
 
 # ════════════════════════════════════════════════════════════════
 # RELEASES (newest first, condensed highlights only)
@@ -14,6 +14,14 @@ releases:
   # ─────────────────────────────────────────────────────────────
   # 2.1.x Series (January-April 2026)
   # ─────────────────────────────────────────────────────────────
+
+  - version: "2.1.97"
+    date: "2026-04-09"
+    highlights:
+      - "⭐ Focus view toggle (Ctrl+O) in NO_FLICKER mode — shows prompt, one-line tool summary with edit diffstats, and final response"
+      - "refreshInterval status line setting — re-runs the command every N seconds; workspace.git_worktree added to status line JSON input"
+      - "● N running indicator in /agents next to agent types with live subagent instances; Cedar policy syntax highlighting"
+      - "30+ bug fixes: NO_FLICKER (15 fixes including crash, memory leak, scroll artifacts), /resume (6 fixes), MCP 50 MB/hr buffer leak, permissions hardening, 429 exponential backoff"
 
   - version: "2.1.96"
     date: "2026-04-08"

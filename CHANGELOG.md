@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Documentation
+
+- **Output Styles** (`guide/ultimate-guide.md` §9.7, `guide/cheatsheet.md`, `guide/core/settings-reference.md`, `machine-readable/reference.yaml`, `examples/styles/`): Full documentation of the built-in Output Styles product feature — previously undocumented as a first-class feature. Covers three built-in modes (Default, Explanatory, Learning), activation via `/config` or `outputStyle` in `settings.json`, custom styles via `.claude/styles/`, token cost impact, and the deprecation history of `/output-style` (Oct 2025). Added `outputStyle` setting expansion in settings-reference, corrected stale `/output-style` slash command row, added entry to `reference.yaml`, added to cheatsheet "Features Méconnues" table, and created `examples/styles/custom-style-template.md` with usage notes and `keep-coding-instructions` myth correction.
+
+## [3.38.11] - 2026-04-09
+
+### Documentation
+
+- **Claude Code Releases**: Updated tracking to v2.1.97
+  - Focus view toggle (`Ctrl+O`) in NO_FLICKER mode with prompt, tool summary, and response
+  - `refreshInterval` status line setting + `workspace.git_worktree` JSON field
+  - 30+ bug fixes: NO_FLICKER (15 fixes), /resume (6 fixes), MCP 50 MB/hr buffer leak, permissions hardening, 429 exponential backoff
+
+## [3.38.10] - 2026-04-08
+
+### Added
+
+- **Claude Managed Agents section** (`guide/ecosystem/ai-ecosystem.md`): New §14 covering Anthropic's cloud-hosted agent platform launched April 8, 2026. Includes: three-way decision table (Messages API vs Managed Agents vs Claude Code), architecture diagram (Brain/Hands/Memory decoupling via Mermaid), multi-agent coordination diagram (orchestrator + specialist threads), real-world use cases (Notion, Rakuten, Asana, Sentry), full Next.js integration pattern (API route with SSE streaming + React hook), decision checklist (when to reach for each layer), research preview features (outcomes/self-evaluation, memory, multi-agent), cost model with per-model pricing table and optimization patterns, `ant` CLI reference, SDK support matrix (8 languages), engineering background (pets vs cattle, assumption decay, interface stability). ToC updated.
+
 ## [3.38.9] - 2026-04-08
 
 ### Added

@@ -10,13 +10,13 @@ tags: [reference, release]
 > **Full details**: [github.com/anthropics/claude-code/CHANGELOG.md](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md)
 > **Machine-readable**: [claude-code-releases.yaml](../machine-readable/claude-code-releases.yaml)
 
-**Latest**: v2.1.96 | **Updated**: 2026-04-08
+**Latest**: v2.1.97 | **Updated**: 2026-04-09
 
 ---
 
 ## Quick Jump
 
-- [2.1.x Series (January-April 2026)](#21x-series-january-april-2026) — Worktree isolation, background agents, ConfigChange hook, Fast mode Opus 4.6, 1M context, claude.ai MCP connectors, remote-control, auto-memory, /copy command, HTTP hooks, worktree config sharing, ultrathink re-introduced, InstructionsLoaded hook, 4 security fixes, Agent model override restored, 12x SDK token cost reduction, /context actionable suggestions, modelOverrides setting, 1M context Opus 4.6 default for Max/Team/Enterprise, MCP elicitation, PostCompact hook, /effort command, Opus 4.6 64k/128k output tokens, allowRead sandbox setting, /branch command, StopFailure hook, streaming line-by-line, --console auth flag, SessionEnd fix, enterprise retry fix, rate_limits statusline field, effort frontmatter for skills, --channels MCP research preview, --bare flag, worktree session resume fix, MCP query collapsing, managed-settings.d/ drop-in, CwdChanged/FileChanged hooks, transcript search, credential scrubbing, PowerShell tool Windows preview, conditional hooks if field, MCP headersHelper multi-server env vars, headless AskUserQuestion hooks, X-Claude-Code-Session-Id header, Jujutsu/Sapling VCS exclusions, @ mention token reduction, Read tool compact format, Cowork Dispatch fix, PermissionDenied hook, thinking summaries off by default, "defer" PreToolUse permission, CLAUDE_CODE_NO_FLICKER, /powerup interactive lessons, PowerShell hardened permissions, SSE linear-time performance, MCP 500K result override, disableSkillShellExecution, plugin bin/ executables, Edit tool shorter anchors, interactive Bedrock wizard, forceRemoteSettingsRefresh, /cost per-model breakdown, interactive /release-notes, Linux sandbox apply-seccomp fix, Bedrock Mantle support, high effort default for API/enterprise users, Bedrock auth fix
+- [2.1.x Series (January-April 2026)](#21x-series-january-april-2026) — Worktree isolation, background agents, ConfigChange hook, Fast mode Opus 4.6, 1M context, claude.ai MCP connectors, remote-control, auto-memory, /copy command, HTTP hooks, worktree config sharing, ultrathink re-introduced, InstructionsLoaded hook, 4 security fixes, Agent model override restored, 12x SDK token cost reduction, /context actionable suggestions, modelOverrides setting, 1M context Opus 4.6 default for Max/Team/Enterprise, MCP elicitation, PostCompact hook, /effort command, Opus 4.6 64k/128k output tokens, allowRead sandbox setting, /branch command, StopFailure hook, streaming line-by-line, --console auth flag, SessionEnd fix, enterprise retry fix, rate_limits statusline field, effort frontmatter for skills, --channels MCP research preview, --bare flag, worktree session resume fix, MCP query collapsing, managed-settings.d/ drop-in, CwdChanged/FileChanged hooks, transcript search, credential scrubbing, PowerShell tool Windows preview, conditional hooks if field, MCP headersHelper multi-server env vars, headless AskUserQuestion hooks, X-Claude-Code-Session-Id header, Jujutsu/Sapling VCS exclusions, @ mention token reduction, Read tool compact format, Cowork Dispatch fix, PermissionDenied hook, thinking summaries off by default, "defer" PreToolUse permission, CLAUDE_CODE_NO_FLICKER, /powerup interactive lessons, PowerShell hardened permissions, SSE linear-time performance, MCP 500K result override, disableSkillShellExecution, plugin bin/ executables, Edit tool shorter anchors, interactive Bedrock wizard, forceRemoteSettingsRefresh, /cost per-model breakdown, interactive /release-notes, Linux sandbox apply-seccomp fix, Bedrock Mantle support, high effort default for API/enterprise users, Bedrock auth fix, NO_FLICKER focus view (Ctrl+O), refreshInterval status line, 30+ bug fixes
 - [2.0.x Series (Nov 2025 - Jan 2026)](#20x-series-november-2025---january-2026) — Opus 4.5, Claude in Chrome, Background agents
 - [Breaking Changes Summary](#breaking-changes-summary)
 - [Milestone Features](#milestone-features)
@@ -24,6 +24,41 @@ tags: [reference, release]
 ---
 
 ## 2.1.x Series (January-April 2026)
+
+### v2.1.97 (2026-04-09)
+
+> Major bug-fix release with 30+ fixes across NO_FLICKER mode, /resume, permissions, and MCP — plus focus view toggle and status line enhancements.
+
+- **New**: Focus view toggle (`Ctrl+O`) in NO_FLICKER mode — shows prompt, one-line tool summary with edit diffstats, and final response
+- **New**: `refreshInterval` status line setting — re-runs the status line command every N seconds
+- **New**: `workspace.git_worktree` field added to status line JSON input, populated when inside a linked git worktree
+- **New**: `● N running` indicator in `/agents` next to agent types with live subagent instances
+- **New**: Syntax highlighting for Cedar policy files (`.cedar`, `.cedarpolicy`)
+- **Fixed (permissions)**: `--dangerously-skip-permissions` silently downgraded to accept-edits mode after approving a write to a protected path
+- **Fixed (permissions)**: Permission rules with names matching JS prototype properties (e.g. `toString`) causing `settings.json` to be silently ignored
+- **Fixed (permissions)**: Managed-settings allow rules remaining active after admin removal until process restart
+- **Fixed (permissions)**: `permissions.additionalDirectories` changes not applying mid-session; removing a dir now correctly revokes access without affecting `--add-dir` entries
+- **Fixed (MCP)**: HTTP/SSE connections accumulating ~50 MB/hr of unreleased buffers on reconnect
+- **Fixed (MCP)**: OAuth `oauth.authServerMetadataUrl` not honored on token refresh after restart — fixes ADFS and similar IdPs
+- **Fixed (rate limits)**: 429 retries burning all attempts in ~13 s when server returns small `Retry-After` — exponential backoff now applies as minimum
+- **Fixed (rate limits)**: Rate-limit upgrade options disappearing after context compaction
+- **Fixed (/resume)**: 6 fixes — `--resume <name>` opened uneditable, Ctrl+A wiped search, empty list swallowed navigation, task-status replaced conversation summary, cross-project staleness, file-edit diffs disappearing for files >10 KB
+- **Fixed (transcript)**: `--resume` cache misses from attachment messages not saved; messages typed during Claude's response not persisted
+- **Fixed (hooks)**: `Stop`/`SubagentStop` hooks failing on long sessions; hook evaluator API errors showing "JSON validation failed" instead of actual message
+- **Fixed (subagents)**: Worktree isolation / `cwd:` override leaking working directory back to parent Bash tool
+- **Fixed (compaction)**: Duplicate multi-MB subagent transcript files on prompt-too-long retries
+- **Fixed (plugins)**: `claude plugin update` reporting "already at latest" for git-based marketplace plugins with newer remote commits; slash command picker breaking when plugin frontmatter `name` is a YAML boolean keyword
+- **Fixed (NO_FLICKER, 15 fixes)**: Wrapped URL spaces, zellij scroll artifacts, MCP result hover crash, API retry memory leak, slow Windows Terminal mouse-wheel, custom status line hidden on terminals <24 rows, Shift+Enter/Alt+arrow in Warp, CJK text garbled on Windows copy, footer indicator wrapping, blockquote left bar across wrapped lines, transient context-low notification
+- **Fixed (Bedrock)**: SigV4 auth failing when `AWS_BEARER_TOKEN_BEDROCK` / `ANTHROPIC_BEDROCK_BASE_URL` set to empty strings (as GitHub Actions does for unset inputs)
+- **Improved**: Accept Edits mode auto-approves filesystem commands prefixed with safe env vars or process wrappers (e.g. `LANG=C rm foo`, `timeout 5 mkdir out`)
+- **Improved**: Auto mode and bypass-permissions mode auto-approve sandbox network access prompts; `sandbox.network.allowMachLookup` now takes effect on macOS
+- **Improved**: Pasted and attached images compressed to same token budget as Read tool images
+- **Improved**: Slash command and `@`-mention completion now triggers after CJK sentence punctuation — Japanese/Chinese input no longer requires a space before `/` or `@`
+- **Improved**: Bridge sessions show local git repo, branch, and working directory on the claude.ai session card
+- **Improved**: Session transcript size reduced by skipping empty hook entries and capping stored pre-edit file copies; per-block entries now carry final token usage
+- **Updated**: `/claude-api` skill covers Managed Agents alongside the Claude API
+
+---
 
 ### v2.1.96 (2026-04-08)
 
