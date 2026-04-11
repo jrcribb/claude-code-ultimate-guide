@@ -2,8 +2,8 @@
 # For use with /security-check and /security-audit commands
 # Manually maintained — update after new security advisories
 
-version: "2.12.0"
-updated: "2026-04-06"
+version: "2.13.0"
+updated: "2026-04-11"
 sources:
   - name: "Snyk ToxicSkills"
     url: "https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/"
@@ -257,6 +257,39 @@ sources:
   - name: "Permiso - SandyClaw: First Dynamic Sandbox for AI Agent Skills"
     url: "https://permiso.io/blog/introducing-sandyclaw-dynamic-sandbox-ai-agent-skills"
     date: "2026-04-03"
+  - name: "arXiv 2604.06550 - Hierarchical Triage Framework for Detecting Malicious AI Agent Skills"
+    url: "https://arxiv.org/html/2604.06550v1"
+    date: "2026-04-09"
+  - name: "arXiv 2604.04759 - A Real-World Safety Analysis of OpenClaw"
+    url: "https://arxiv.org/html/2604.04759"
+    date: "2026-04-07"
+  - name: "NVD - CVE-2026-35577 Apollo MCP Server DNS Rebinding"
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-35577"
+    date: "2026-04-10"
+  - name: "runZero - CVE-2026-5374 runZero Platform MCP Info Leak"
+    url: "https://www.runzero.com/advisories/runzero-platform-mcp-infoleak-cve-2026-5374/"
+    date: "2026-04-07"
+  - name: "NVD - CVE-2026-5833 mcp-server-taskwarrior Command Injection"
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-5833"
+    date: "2026-04-09"
+  - name: "CVEDetails - CVE-2026-5619 Braffolk mcp-summarization-functions"
+    url: "https://www.cvedetails.com/cve/CVE-2026-5619/"
+    date: "2026-04-06"
+  - name: "CVE.org - CVE-2026-39974 n8n-MCP Vulnerability"
+    url: "https://www.cve.org/CVERecord?id=CVE-2026-39974"
+    date: "2026-04-09"
+  - name: "Red Hat - CVE-2026-27124 FastMCP OAuthProxy OAuth Validation Flaw"
+    url: "https://access.redhat.com/security/cve/cve-2026-27124"
+    date: "2026-04-06"
+  - name: "AccuKnox - ClawArmor for OpenClaw Security"
+    url: "https://accuknox.com/blog/introducing-clawarmor-for-openclaw-instances"
+    date: "2026-04-07"
+  - name: "prompt-security/ClawSec - Security Skill Suite for AI Agent Platforms"
+    url: "https://github.com/prompt-security/clawsec"
+    date: "2026-04-10"
+  - name: "Praetorian - Indirect Prompt Injection: The LLM Supervisor Blind Spot"
+    url: "https://www.praetorian.com/blog/indirect-prompt-injection-llm/"
+    date: "2026-04-10"
 
 # ═══════════════════════════════════════════════════════════════
 # MALICIOUS AUTHORS (confirmed by security researchers)
@@ -1223,6 +1256,70 @@ cve_database:
     mitigation: "Update a11y-mcp to >= 1.0.6; restrict a11y-mcp network access to trusted targets; validate all URLs passed to A11yServer function"
     cwe: "CWE-918"
 
+  # --- Apollo MCP Server (DNS Rebinding) ---
+  - id: "CVE-2026-35577"
+    component: "Apollo MCP Server (prior to version 1.7.0)"
+    severity: "medium"
+    description: "Missing Host header validation on incoming HTTP requests when using StreamableHTTP transport — allows DNS rebinding attacks that bypass same-origin policy and invoke tools or access resources on behalf of local users; risk is mitigated in deployments using authentication, network controls, or stdio transport"
+    source: "NVD (2026-04-10)"
+    fixed_in: "1.7.0"
+    mitigation: "Update Apollo MCP Server to >= 1.7.0; prefer stdio transport over HTTP; implement Host header validation; add authentication to all HTTP-based MCP server endpoints; do not run HTTP MCP servers on localhost without auth"
+    cwe: "CWE-346"
+    notes: "Related to T005 (DNS Rebinding on Local MCP); class vulnerability affecting all StreamableHTTP transport MCP servers without auth"
+
+  # --- runZero Platform (MCP info leak) ---
+  - id: "CVE-2026-5374"
+    component: "runZero Platform (prior to version 4.0.260202.0)"
+    severity: "medium"
+    cvss: 5.8
+    description: "Information disclosure (CWE-863: Incorrect Authorization) — MCP agents could access remediation and asset information from outside the authorized organization scope; cross-org data leakage through misconfigured MCP authorization boundaries"
+    source: "runZero advisory (2026-04-07)"
+    fixed_in: "4.0.260202.0"
+    mitigation: "Update runZero Platform to >= 4.0.260202.0; audit MCP agent permissions to ensure org-scope isolation; validate organization boundary enforcement after upgrade"
+    cwe: "CWE-863"
+
+  # --- mcp-server-taskwarrior (command injection) ---
+  - id: "CVE-2026-5833"
+    component: "mcp-server-taskwarrior (awwaiid, up to 1.0.1)"
+    severity: "high"
+    description: "Command injection through the Identifier argument in server.setRequestHandler — requires local attack initiation but allows arbitrary command execution via unvalidated task identifier input passed to the shell"
+    source: "NVD (2026-04-09)"
+    fixed_in: "patched; update to latest version"
+    mitigation: "Update mcp-server-taskwarrior to latest patched version; restrict server to trusted local environments; sanitize all task identifier inputs"
+    cwe: "CWE-77"
+    notes: "Local attack vector only; lower priority than network-exposed CVEs but still high severity"
+
+  # --- mcp-summarization-functions (Braffolk) ---
+  - id: "CVE-2026-5619"
+    component: "mcp-summarization-functions (Braffolk, up to 0.1.5)"
+    severity: "medium"
+    description: "Vulnerability in Braffolk mcp-summarization-functions up to version 0.1.5 — exact nature of the flaw is not yet fully documented; treat as unverified pending full disclosure"
+    source: "CVEDetails (2026-04-06)"
+    fixed_in: "0.1.6 or later — update to latest version"
+    mitigation: "Update mcp-summarization-functions to latest version; do not use in production until full advisory is published"
+    notes: "Limited details available at time of writing; monitor CVEDetails and NVD for full advisory"
+
+  # --- n8n-MCP ---
+  - id: "CVE-2026-39974"
+    component: "n8n-MCP (MCP server for n8n workflow documentation)"
+    severity: "medium"
+    description: "Vulnerability in n8n-MCP, a Model Context Protocol server providing AI assistants with comprehensive access to n8n node documentation and operations — exact nature not yet fully disclosed; CVE record reserved"
+    source: "CVE.org (2026-04-09)"
+    fixed_in: "update to latest version"
+    mitigation: "Update n8n-MCP to latest version; monitor CVE record for full advisory; restrict n8n-MCP to trusted environments"
+    notes: "Limited details available; monitor NVD and n8n-MCP repository for full disclosure"
+
+  # --- FastMCP OAuthProxy (OAuth consent bypass) ---
+  - id: "CVE-2026-27124"
+    component: "FastMCP and FastMCP OAuthProxy"
+    severity: "high"
+    description: "The OAuthProxy component used for GitHub OAuth authentication does not properly validate a user's consent after authentication — an attacker could leverage this flaw to bypass OAuth consent validation and gain unauthorized access to connected MCP tools using a victim's GitHub identity"
+    source: "Red Hat Security Advisory (2026-04-06)"
+    fixed_in: "update to patched version — check upstream FastMCP releases"
+    mitigation: "Update FastMCP to latest patched version; audit OAuth flows in any MCP server using FastMCP OAuthProxy; implement additional server-side consent validation; monitor GitHub OAuth grant tokens for unexpected usage"
+    cwe: "CWE-287"
+    notes: "OAuth bypass in a widely used MCP authentication component — high impact given FastMCP's adoption across many MCP server implementations"
+
 # ═══════════════════════════════════════════════════════════════
 # MINIMUM SAFE VERSIONS (quick reference for scanning)
 # ═══════════════════════════════════════════════════════════════
@@ -1241,6 +1338,10 @@ minimum_safe_versions:
   "mcp-salesforce-connector": "0.1.10"
   "openclaw": "2026.1.29"
   "azure-mcp-server": "March 2026 Patch Tuesday (2026-03-10)"
+  "apollo-mcp-server": "1.7.0"
+  "runzero-platform": "4.0.260202.0"
+  "fastmcp": "check upstream — CVE-2026-27124 patched version"
+  "a11y-mcp": "1.0.6"
   "bun": "1.3.5"
   "mcp-atlassian": "0.17.0"
   "aws-api-mcp-server": "1.4.0"
@@ -1885,6 +1986,28 @@ attack_techniques:
     source: "Straiker.ai (2026-04-03)"
     mitigation: "Disable auto-approve for file writes and shell commands in AI IDE settings; never open untrusted repos without reviewing markdown files first; audit .zshenv and shell init files after opening new repos; disable remote tunnel features unless actively required; treat IDE workspace as a security boundary"
 
+  - id: "T023"
+    name: "Lies-in-the-Loop UI Deception Attack"
+    description: "Attacker crafts malicious content that exploits the gap between what an AI coding agent displays in its confirmation dialog and what it actually executes. The agent UI summarizes the planned action in benign language while the underlying tool call performs a different, malicious operation. Developers approve the attack because the confirmation UI appears legitimate, while the actual executed command steals credentials, modifies files, or escalates privileges."
+    examples:
+      - "Agent confirms 'run unit tests' in UI while actually executing SSH key exfiltration via curl"
+      - "Confirmation shows 'update package.json' while subprocess deletes files and backdoors init scripts"
+      - "AI IDE displays 'linting check' approval dialog masking a reverse shell establishment"
+    affected_platforms: ["Cursor", "AI coding agents with tool-call confirmation dialogs"]
+    source: "Dark Reading / Equixly vibe coding security research (2026-04-07)"
+    mitigation: "Never rely on agent UI summaries alone — review raw tool call parameters before approving; require structured, machine-readable confirmation format that shows exact command and arguments; use runtime monitors (Jozu Agent Guard, Semgrep MCP) to validate actual tool invocations against approved summaries; treat any mismatch between confirmation text and executed command as an incident"
+
+  - id: "T024"
+    name: "Prompt Poaching via Browser Extension"
+    description: "Malicious or compromised browser extensions silently intercept and exfiltrate conversations between developers and AI coding assistants (Claude, Copilot, Cursor, ChatGPT). Unlike prompt injection (which manipulates the agent), prompt poaching passively captures every question, code snippet, API key, environment variable, and confidential document shared in the AI chat session — without requiring any mistake by the developer."
+    examples:
+      - "Fake productivity extension captures all Claude conversation history including code and secrets shared in context"
+      - "Trojanized AI helper extension exfiltrates Cursor chat sessions containing database credentials and internal architecture"
+      - "Browser extension with 'AI autocomplete' permissions reads and forwards every prompt to attacker C2 server"
+    affected_platforms: ["All browser-based AI coding assistants (Claude.ai, Cursor web, GitHub Copilot Chat)"]
+    source: "Reco.ai / HelpNetSecurity (2026-04-09)"
+    mitigation: "Audit installed browser extensions and remove any with unnecessary permissions to read all page data; use AI coding tools via native desktop app rather than browser when handling sensitive code; never share API keys, credentials, or secrets in AI chat sessions; treat browser-based AI conversations as potentially intercepted; implement DLP policies for AI tool usage"
+
 # ═══════════════════════════════════════════════════════════════
 # SCANNING TOOLS
 # ═══════════════════════════════════════════════════════════════
@@ -2257,6 +2380,36 @@ scanning_tools:
       - "Requires Semgrep account for full rule set"
     notes: "Available 2026-03-23; integrates as post-tool-cli-scan hook for continuous security validation during agent-driven development"
 
+  - name: "ClawArmor"
+    vendor: "AccuKnox"
+    type: "runtime-protection"
+    url: "https://accuknox.com/blog/introducing-clawarmor-for-openclaw-instances"
+    capabilities:
+      - "Runtime protection layer for OpenClaw instances"
+      - "Addresses 15 default-configuration risk vectors"
+      - "Monitors skill execution for anomalous behavior"
+      - "Blocks known-malicious skills from executing"
+      - "Detects credential harvesting and data exfiltration attempts at runtime"
+    limitations:
+      - "OpenClaw-specific — does not protect other AI agent platforms"
+      - "New tool with limited public documentation at launch"
+    notes: "Launched 2026-04-07; 820+ malicious skills identified on ClawHub at launch (out of ~10,700 total); complements static scanning with runtime enforcement"
+
+  - name: "ClawSec"
+    vendor: "prompt-security"
+    type: "skill-suite"
+    url: "https://github.com/prompt-security/clawsec"
+    capabilities:
+      - "Complete security skill suite for AI agent platforms"
+      - "Unified security monitoring across skill executions"
+      - "Integrity verification for installed skills"
+      - "Threat intelligence integration against known malicious patterns"
+      - "Security event logging and alerting"
+    limitations:
+      - "Relies on skills installing correctly — does not protect against install-time attacks"
+      - "Effectiveness depends on threat intelligence freshness"
+    notes: "Available 2026-04-10; designed as a full-coverage security layer complementing mcp-scan and static analysis with behavioral monitoring"
+
 # ═══════════════════════════════════════════════════════════════
 # DEFENSIVE FRAMEWORKS & BLOCKLISTS
 # ═══════════════════════════════════════════════════════════════
@@ -2365,3 +2518,20 @@ defensive_resources:
       skills_with_vuln_pct: 26.1
       exfil_pattern_pct: 13.3
       priv_esc_pattern_pct: 11.8
+
+  - name: "Hierarchical Triage Framework for Detecting Malicious AI Agent Skills (arXiv 2604.06550)"
+    url: "https://arxiv.org/html/2604.06550v1"
+    type: "research"
+    description: "April 2026 paper proposing a three-tier triage framework for detecting malicious skills on ClawHub and similar registries: (1) lightweight metadata screening to eliminate obvious safe skills, (2) static code analysis for suspicious patterns, (3) LLM-based semantic analysis for sophisticated obfuscation. Evaluated on 13,000+ OpenClaw skills; documents that 7-12% of registry skills are confirmed malicious and 13-26% contain security vulnerabilities. Key contribution: hierarchical approach reduces false positives vs. flat scanning and scales to large registries."
+    stats:
+      registry_size: 13000
+      confirmed_malicious_pct: "7-12"
+      vulnerable_pct: "13-26"
+
+  - name: "A Real-World Safety Analysis of OpenClaw (arXiv 2604.04759)"
+    url: "https://arxiv.org/html/2604.04759"
+    type: "research"
+    description: "April 2026 empirical safety analysis of OpenClaw as the most widely deployed personal AI agent with full local system access. Documents 824+ malicious skills in ClawHub, four primary attack categories (credential harvesters, prompt injection loaders, cryptominers/backdoors, and guidance injection), and the detection gap between regex scanners and natural language instruction attacks hidden in SKILL.md files. Key finding: mandatory ClawHub code review after the crisis is primarily automated and misses sophisticated social engineering payloads."
+    stats:
+      malicious_skills_confirmed: 824
+      attack_categories: 4
