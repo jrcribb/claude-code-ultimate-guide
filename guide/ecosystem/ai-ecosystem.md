@@ -33,6 +33,7 @@ tags: [ai-ecosystem, guide, workflows, integration]
 - [11.4 Skills Distribution Platforms](#114-skills-distribution-platforms)
 - [12. Context Packing Tools](#12-context-packing-tools)
 - [14. Claude Managed Agents (Cloud-Hosted Platform)](#14-claude-managed-agents-cloud-hosted-platform)
+- [15. Project Glasswing & Claude Mythos Preview (Defensive Security)](#15-project-glasswing--claude-mythos-preview-defensive-security)
 - [Appendix: Ready-to-Use Prompts](#appendix-ready-to-use-prompts)
 - [Alternative Providers (Community Workarounds)](#alternative-providers-community-workarounds)
 
@@ -3287,6 +3288,62 @@ From the [Anthropic engineering blog](https://www.anthropic.com/engineering/mana
 - [Multi-agent coordination docs](https://platform.claude.com/docs/en/managed-agents/multi-agent)
 - [Request research preview access](https://claude.com/form/claude-managed-agents) (multi-agent, self-evaluation, memory)
 - [`ant` CLI releases](https://github.com/anthropics/anthropic-cli/releases)
+
+---
+
+---
+
+## 15. Project Glasswing & Claude Mythos Preview (Defensive Security)
+
+> **Announced**: April 7, 2026. **Access**: Invite-only research preview, not a public API endpoint.
+
+Project Glasswing is Anthropic's initiative for AI-powered defensive vulnerability discovery in critical software infrastructure. It is not a Claude Code feature and has no public API. It appears in this guide because it signals where frontier Claude capabilities are headed, and because it matters to developers who maintain or depend on major open-source projects.
+
+---
+
+### What it is
+
+Glasswing deploys **Claude Mythos Preview**, a new frontier-class model built specifically for automated vulnerability discovery. Mythos is not accessible via the standard Anthropic API. Access requires Anthropic approval and is restricted to partner organizations in the security and critical infrastructure space.
+
+Partners at launch: AWS, Apple, Broadcom, Cisco, CrowdStrike, Google, JPMorgan Chase, the Linux Foundation, Microsoft, NVIDIA, and Palo Alto Networks, alongside 40+ organizations that maintain critical software.
+
+### What Mythos has found
+
+From Anthropic's release materials, corroborated by TechCrunch, PBS NewsHour, and Forbes:
+
+- Thousands of high-severity vulnerabilities, including decades-old bugs in OpenBSD, FFmpeg, and the Linux kernel
+- Vulnerabilities across all major operating systems and web browsers
+
+### What this means for developers
+
+**Model direction**: Mythos-class capabilities (deep static analysis, multi-file dependency tracing, exploit path modeling) will eventually flow into production Claude models. When they do, Claude Code's security-focused workflows will gain significant depth.
+
+**Open-source implications**: If you maintain packages depended on by critical infrastructure, Glasswing partners may reach out with coordinated disclosure findings through OpenSSF, Alpha-Omega, or the Apache Software Foundation (all Glasswing-funded).
+
+**Staged rollout signal**: Anthropic plans to test Mythos safeguards on a future Claude Opus release before any public availability. This is the pattern to expect for other high-capability model features: closed research preview, then Opus, then broader access.
+
+### Access and funding
+
+- Invite-only, via Anthropic account executives
+- Up to $100M in Mythos credits available to partner organizations
+- Funding committed to Alpha-Omega, OpenSSF, and the Apache Software Foundation
+
+---
+
+### Related: Messages API on Amazon Bedrock (Research Preview)
+
+Announced April 7, 2026 in the Anthropic API release notes alongside Glasswing: the standard Messages API is now available as a research preview on **Amazon Bedrock**, in the `us-east-1` region. It uses the same request schema as the first-party Anthropic API, running on AWS-managed infrastructure.
+
+Practical notes for enterprise Claude Code users:
+
+- Same request format as the direct Anthropic API — migration is a one-line endpoint change for existing integrations
+- Access via your Anthropic account executive (not self-serve yet)
+- Pairs naturally with Claude Code v2.1.101's OS CA certificate store trust (`CLAUDE_CODE_CERT_STORE=bundled` to revert), which makes enterprise TLS proxy setups work without extra configuration
+
+### Resources
+
+- [Anthropic newsroom](https://www.anthropic.com/news) — Project Glasswing announcement
+- [TechCrunch: Claude Mythos AI model preview, security](https://techcrunch.com/2026/04/07/anthropic-mythos-ai-model-preview-security/)
 
 ---
 
