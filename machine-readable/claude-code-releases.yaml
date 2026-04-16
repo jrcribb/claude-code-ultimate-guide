@@ -3,8 +3,8 @@
 # Purpose: Track Claude Code product releases for documentation sync
 # Maintained: Manual updates when new releases are announced
 
-latest: "2.1.109"
-updated: "2026-04-15"
+latest: "2.1.110"
+updated: "2026-04-16"
 
 # ════════════════════════════════════════════════════════════════
 # RELEASES (newest first, condensed highlights only)
@@ -14,6 +14,14 @@ releases:
   # ─────────────────────────────────────────────────────────────
   # 2.1.x Series (January-April 2026)
   # ─────────────────────────────────────────────────────────────
+
+  - version: "2.1.110"
+    date: "2026-04-16"
+    highlights:
+      - "⭐ /tui command and tui setting — run /tui fullscreen for flicker-free rendering in the same conversation"
+      - "⭐ Push notification tool — Claude can send mobile push notifications when Remote Control and 'Push when Claude decides' are enabled"
+      - "⭐ --resume/--continue now resurrects unexpired scheduled tasks"
+      - "/focus command for focus view; Ctrl+O now toggles verbose transcript only; autoScrollEnabled config; session recap for telemetry-disabled users; 30+ bug fixes"
 
   - version: "2.1.109"
     date: "2026-04-15"

@@ -10,13 +10,13 @@ tags: [reference, release]
 > **Full details**: [github.com/anthropics/claude-code/CHANGELOG.md](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md)
 > **Machine-readable**: [claude-code-releases.yaml](../machine-readable/claude-code-releases.yaml)
 
-**Latest**: v2.1.109 | **Updated**: 2026-04-15
+**Latest**: v2.1.110 | **Updated**: 2026-04-16
 
 ---
 
 ## Quick Jump
 
-- [2.1.x Series (January-April 2026)](#21x-series-january-april-2026) — Worktree isolation, background agents, ConfigChange hook, Fast mode Opus 4.6, 1M context, claude.ai MCP connectors, remote-control, auto-memory, /copy command, HTTP hooks, worktree config sharing, ultrathink re-introduced, InstructionsLoaded hook, 4 security fixes, Agent model override restored, 12x SDK token cost reduction, /context actionable suggestions, modelOverrides setting, 1M context Opus 4.6 default for Max/Team/Enterprise, MCP elicitation, PostCompact hook, /effort command, Opus 4.6 64k/128k output tokens, allowRead sandbox setting, /branch command, StopFailure hook, streaming line-by-line, --console auth flag, SessionEnd fix, enterprise retry fix, rate_limits statusline field, effort frontmatter for skills, --channels MCP research preview, --bare flag, worktree session resume fix, MCP query collapsing, managed-settings.d/ drop-in, CwdChanged/FileChanged hooks, transcript search, credential scrubbing, PowerShell tool Windows preview, conditional hooks if field, MCP headersHelper multi-server env vars, headless AskUserQuestion hooks, X-Claude-Code-Session-Id header, Jujutsu/Sapling VCS exclusions, @ mention token reduction, Read tool compact format, Cowork Dispatch fix, PermissionDenied hook, thinking summaries off by default, "defer" PreToolUse permission, CLAUDE_CODE_NO_FLICKER, /powerup interactive lessons, PowerShell hardened permissions, SSE linear-time performance, MCP 500K result override, disableSkillShellExecution, plugin bin/ executables, Edit tool shorter anchors, interactive Bedrock wizard, forceRemoteSettingsRefresh, /cost per-model breakdown, interactive /release-notes, Linux sandbox apply-seccomp fix, Bedrock Mantle support, high effort default for API/enterprise users, Bedrock auth fix, NO_FLICKER focus view (Ctrl+O), refreshInterval status line, 30+ bug fixes, Vertex AI wizard, Monitor tool, CLAUDE_CODE_PERFORCE_MODE, Bash security hardening, subprocess PID namespace sandboxing, /team-onboarding command, OS CA cert store trust by default, /ultraplan auto-cloud-environment, 40+ bug fixes, PreCompact hook blocking, EnterWorktree path param, plugin monitors, /proactive alias, WebFetch CSS/JS stripping, /doctor status icons, thinking hints sooner, ENABLE_PROMPT_CACHING_1H, /recap session context, built-in slash commands via Skill tool, /undo alias, rotating extended-thinking indicator
+- [2.1.x Series (January-April 2026)](#21x-series-january-april-2026) — Worktree isolation, background agents, ConfigChange hook, Fast mode Opus 4.6, 1M context, claude.ai MCP connectors, remote-control, auto-memory, /copy command, HTTP hooks, worktree config sharing, ultrathink re-introduced, InstructionsLoaded hook, 4 security fixes, Agent model override restored, 12x SDK token cost reduction, /context actionable suggestions, modelOverrides setting, 1M context Opus 4.6 default for Max/Team/Enterprise, MCP elicitation, PostCompact hook, /effort command, Opus 4.6 64k/128k output tokens, allowRead sandbox setting, /branch command, StopFailure hook, streaming line-by-line, --console auth flag, SessionEnd fix, enterprise retry fix, rate_limits statusline field, effort frontmatter for skills, --channels MCP research preview, --bare flag, worktree session resume fix, MCP query collapsing, managed-settings.d/ drop-in, CwdChanged/FileChanged hooks, transcript search, credential scrubbing, PowerShell tool Windows preview, conditional hooks if field, MCP headersHelper multi-server env vars, headless AskUserQuestion hooks, X-Claude-Code-Session-Id header, Jujutsu/Sapling VCS exclusions, @ mention token reduction, Read tool compact format, Cowork Dispatch fix, PermissionDenied hook, thinking summaries off by default, "defer" PreToolUse permission, CLAUDE_CODE_NO_FLICKER, /powerup interactive lessons, PowerShell hardened permissions, SSE linear-time performance, MCP 500K result override, disableSkillShellExecution, plugin bin/ executables, Edit tool shorter anchors, interactive Bedrock wizard, forceRemoteSettingsRefresh, /cost per-model breakdown, interactive /release-notes, Linux sandbox apply-seccomp fix, Bedrock Mantle support, high effort default for API/enterprise users, Bedrock auth fix, NO_FLICKER focus view (Ctrl+O), refreshInterval status line, 30+ bug fixes, Vertex AI wizard, Monitor tool, CLAUDE_CODE_PERFORCE_MODE, Bash security hardening, subprocess PID namespace sandboxing, /team-onboarding command, OS CA cert store trust by default, /ultraplan auto-cloud-environment, 40+ bug fixes, PreCompact hook blocking, EnterWorktree path param, plugin monitors, /proactive alias, WebFetch CSS/JS stripping, /doctor status icons, thinking hints sooner, ENABLE_PROMPT_CACHING_1H, /recap session context, built-in slash commands via Skill tool, /undo alias, rotating extended-thinking indicator, /tui fullscreen command, push notification tool, --resume resurrects scheduled tasks, /focus command, autoScrollEnabled config, session recap for telemetry-disabled, 30+ bug fixes
 - [2.0.x Series (Nov 2025 - Jan 2026)](#20x-series-november-2025---january-2026) — Opus 4.5, Claude in Chrome, Background agents
 - [Breaking Changes Summary](#breaking-changes-summary)
 - [Milestone Features](#milestone-features)
@@ -24,6 +24,32 @@ tags: [reference, release]
 ---
 
 ## 2.1.x Series (January-April 2026)
+
+### v2.1.110 (2026-04-16)
+
+> /tui fullscreen command, push notification tool, --resume resurrects scheduled tasks, /focus command, 30+ bug fixes.
+
+- **New**: `/tui` command and `tui` setting — run `/tui fullscreen` to switch to flicker-free rendering within the same conversation
+- **New**: Push notification tool (`PushNotification`) — Claude can send mobile push notifications when Remote Control and "Push when Claude decides" config are enabled
+- **New**: `--resume`/`--continue` now resurrects unexpired scheduled tasks
+- **New**: `/focus` command — focus view is now toggled separately; `Ctrl+O` reverts to toggling between normal and verbose transcript only
+- **New**: `autoScrollEnabled` config — disable conversation auto-scroll in fullscreen mode
+- **New**: Option to show Claude's last response as commented context in the `Ctrl+G` external editor (enable via `/config`)
+- **Improved**: `/plugin` Installed tab — items needing attention and favorites appear at the top; disabled items hidden behind a fold; `f` to favorite
+- **Improved**: `/doctor` warns when an MCP server is defined in multiple config scopes with different endpoints
+- **Improved**: Session recap now enabled for users with telemetry disabled (Bedrock, Vertex, Foundry, `DISABLE_TELEMETRY`); opt out via `/config` or `CLAUDE_CODE_ENABLE_AWAY_SUMMARY=0`
+- **Improved**: Write tool informs the model when you edit proposed content in the IDE diff before accepting; Bash tool enforces documented maximum timeout
+- **Fixed**: MCP tool calls hanging indefinitely when server connection drops mid-response on SSE/HTTP transports
+- **Fixed**: Non-streaming fallback retries causing multi-minute hangs when API is unreachable
+- **Fixed**: `PermissionRequest` hooks returning `updatedInput` not being re-checked against `permissions.deny` rules; `setMode:'bypassPermissions'` now respects `disableBypassPermissionsMode`
+- **Fixed**: `PreToolUse` hook `additionalContext` dropped when the tool call fails
+- **Fixed**: stdio MCP servers that print stray non-JSON lines to stdout being disconnected on first stray line (regression in 2.1.105)
+- **Fixed**: Headless/SDK auto-title firing an extra Haiku request when `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` or `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` is set
+- **Fixed**: Garbled startup rendering in macOS Terminal.app and other terminals without synchronized output support
+- **Security**: Hardened "Open in editor" actions against command injection from untrusted filenames
+- **Fixed**: Multiple additional issues — high CPU usage in fullscreen, dropped keystrokes after relaunch, `/skills` menu not scrolling, Remote Control session renames not persisting, session cleanup not removing subagent transcripts
+
+---
 
 ### v2.1.109 (2026-04-15)
 

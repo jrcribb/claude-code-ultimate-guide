@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Documentation
+
+- **Claude Code Releases**: Updated tracking to v2.1.110 (2026-04-16)
+  - /tui command and tui setting — flicker-free fullscreen rendering in same conversation
+  - Push notification tool — mobile push when Remote Control enabled
+  - --resume/--continue resurrects unexpired scheduled tasks
+  - /focus command (focus view separated from Ctrl+O verbose transcript toggle)
+  - autoScrollEnabled config, session recap for telemetry-disabled users
+  - 30+ bug fixes including MCP hang on dropped connections, stray stdio JSON lines regression, command injection hardening
+
 ### Added
 
 - **Security hardening** (`.claude/settings.json`, `.claude/hooks/`): Applied the guide's own security recommendations to this repo. Added `permissions.deny` blocking read access to `.env*`, `*.pem`, `credentials*`, `id_rsa*`, `id_ed25519*`, `secrets/**`. Added `PreToolUse` hook wiring `dangerous-actions-blocker.sh` for Bash, Edit, and Write operations. Copied `dangerous-actions-blocker.sh` from `examples/hooks/bash/` to `.claude/hooks/`.
