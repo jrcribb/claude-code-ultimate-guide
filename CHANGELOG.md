@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [3.39.1] - 2026-04-16
+
+### Added
+
+- **context-evaluator** (`guide/ecosystem/third-party-tools.md` Configuration Quality section): New entry for the Packmind OSS tool that evaluates CLAUDE.md / AGENTS.md quality using 17 AI evaluators (13 error + 4 suggestion). Includes the zero-install web version at context-evaluator.ai, the Caliber comparison table, and cross-ref to the 2 patterns extracted from its source.
+
+- **Runtime Prompt Logging** (`guide/core/skill-design-patterns.md`): New pattern: write the full evaluator prompt to disk as a blocking `await` BEFORE invoking the AI provider. Survives provider crashes, never throws, always-on (not gated by a debug flag). Observed in PackmindHub/context-evaluator (MIT).
+
+- **Adaptive Unified/Parallel Mode** (`guide/core/skill-design-patterns.md`): New pattern: estimate combined token count of input files before launching agents. Below 100K tokens, one unified agent handles all files (cross-file contradiction detection). Above threshold, each file gets an independent parallel agent. Concrete threshold decision with `canUseUnifiedMode()`. Observed in PackmindHub/context-evaluator (MIT).
+
+- **context-evaluator evaluation** (`docs/resource-evaluations/context-evaluator-evaluation.md`): Score 4/5. Documents all 4 patterns identified in the source read, integration decisions, and delta vs Caliber.
+
+- **Credits: context-evaluator** (`guide/core/credits.md`): New entry for PackmindHub/context-evaluator (MIT). Covers Pattern 7 (Runtime Prompt Logging) and Pattern 8 (Adaptive Unified/Parallel Mode).
+
 ## [3.39.0] - 2026-04-16
 
 ### Added

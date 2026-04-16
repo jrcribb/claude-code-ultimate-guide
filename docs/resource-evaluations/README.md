@@ -72,6 +72,7 @@ Les documents de travail bruts (prompts Perplexity, audits clients) restent dans
 | **qmd Token Savings** (Simone Ruggiero, Medium) | 2/5 | **2/5** | ❌ Ne pas intégrer (redundant avec grepai, claims non vérifiables) | [2026-02-14-simone-ruggiero-qmd-token-savings-medium.md](./2026-02-14-simone-ruggiero-qmd-token-savings-medium.md) |
 | **Rippletide** (AI Reliability Platform) | 2/5 | **2/5** | ⚠️ Watch only (MCP server tiers, claims non vérifiables, pas de traction) | [072-rippletide-ai-reliability-platform.md](./072-rippletide-ai-reliability-platform.md) |
 | **Community Signals & Benchmark** (March 2026 synthesis) | 4/5 | **3/5** | ✅ No integration (all gaps already covered; 2 factual errors detected) | [community-signals-benchmark-march-2026.md](./community-signals-benchmark-march-2026.md) |
+| **context-evaluator** (PackmindHub/context-evaluator) | 4/5 | **4/5** | ✅ Integrated — third-party-tools.md + 2 patterns in skill-design-patterns.md | [context-evaluator-evaluation.md](./context-evaluator-evaluation.md) |
 
 ## Watch List
 

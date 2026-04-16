@@ -424,6 +424,57 @@ caliber refresh
 
 ---
 
+### context-evaluator
+
+An OSS tool by Packmind that evaluates CLAUDE.md and AGENTS.md quality using 17 specialized AI evaluators. Available as a zero-install web app, pre-compiled binary, or Bun source install.
+
+| Attribute | Details |
+|-----------|---------|
+| **Website** | [context-evaluator.ai](https://context-evaluator.ai) |
+| **Source** | [GitHub: PackmindHub/context-evaluator](https://github.com/PackmindHub/context-evaluator) |
+| **Install** | Zero-install at context-evaluator.ai, or binary from GitHub Releases |
+| **Language** | TypeScript (Bun) + React frontend |
+| **License** | MIT |
+| **Status** | Active (Packmind experimental project, 2026) |
+
+**Key features**:
+
+- 17 evaluators split into 13 error types (existing issues) and 4 suggestion types (gaps from codebase analysis): content quality, structure/formatting, command completeness, testing guidance, security awareness, contradictory instructions, outdated paths, and more
+- AGENTS.md and CLAUDE.md treated equivalently — works with Claude Code, Cursor, GitHub Copilot, and Codex formats
+- Codebase fingerprinting: CLOC + folder analysis + config file detection runs first, so each evaluator prompt includes the project's actual languages, frameworks, and key folders. Issues are project-specific, not generic.
+- **Unified mode**: when all files fit under 100K tokens, one agent evaluates them together and can detect cross-file contradictions. Above the threshold, agents run independently per file.
+- **Automated remediation**: select issues from the web UI, choose a target format (Claude Code, Cursor, GitHub Copilot, Cursor), and the AI generates a `.patch` file. Apply manually with `git apply remediation.patch`. No changes committed without review.
+- Multiple AI providers: Claude Code (default), Cursor, OpenCode, GitHub Copilot, OpenAI Codex
+
+**Delta vs Caliber**:
+
+| Feature | Caliber | context-evaluator |
+|---------|---------|-------------------|
+| No AI provider required | Yes (deterministic) | No (requires AI CLI) |
+| Scoring rubric (0-100) | Yes | No |
+| Git drift detection | Yes | No |
+| LLM-based content review | No | Yes (17 evaluators) |
+| Cross-file contradiction detection | No | Yes (unified mode) |
+| Automated remediation (patch file) | No | Yes |
+| Zero-install web version | No | Yes (context-evaluator.ai) |
+
+**When to choose context-evaluator**:
+
+- You want LLM-graded feedback on your CLAUDE.md's actual content, not a structural rubric
+- Your config may have contradictory instructions, stale paths, or missing framework conventions that a deterministic score would not catch
+- You want automated remediation with a reviewable diff (not an in-place rewrite)
+
+**When to choose Caliber instead**:
+
+- You need zero-LLM scoring for CI gates (`fail-below` threshold)
+- You want git-based drift detection as code evolves
+
+**Limitations**: Requires an AI provider with CLI access. Processing takes 1-3 minutes. No deterministic score for CI. No git drift detection.
+
+> **Cross-ref**: For deterministic config scoring, see [Caliber](#caliber). For config generation from scratch, see [AIBlueprint](#aiblueprint). The Runtime Prompt Logging and Adaptive Unified/Parallel Mode patterns from this tool's source are documented in [Skill Design Patterns](../core/skill-design-patterns.md).
+
+---
+
 ## Project Context Bootstrapping
 
 Tools that compile structured codebase knowledge before a Claude Code session starts — so the AI understands routes, schema, dependencies, and high-impact files from the first message, without spending tokens on file exploration.

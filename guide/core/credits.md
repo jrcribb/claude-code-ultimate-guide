@@ -62,6 +62,30 @@ A command template structure where a "Context Validation Checkpoints" section li
 
 ---
 
+## Packmind context-evaluator
+
+**Repo**: [github.com/PackmindHub/context-evaluator](https://github.com/PackmindHub/context-evaluator)
+**Author**: Packmind engineering team
+**License**: MIT
+
+context-evaluator is an OSS CLAUDE.md / AGENTS.md quality analyzer. Two patterns from its source were extracted for the guide:
+
+### Pattern 7: Runtime Prompt Logging
+
+**Guide section**: [Skill Design Patterns](./skill-design-patterns.md#runtime-prompt-logging)
+**Source**: `src/shared/evaluation/runtime-prompt-logger.ts`
+
+Always-on blocking write of the full evaluator prompt to `prompts/debug/` before invoking the AI provider. Survives provider crashes and timeouts. Never throws. Separate from the `--debug` flag.
+
+### Pattern 8: Adaptive Unified/Parallel Mode
+
+**Guide section**: [Skill Design Patterns](./skill-design-patterns.md#adaptive-unifiedparallel-mode)
+**Source**: `src/shared/evaluation/runner.ts` — `canUseUnifiedMode()`
+
+Token-threshold switching between single-agent unified evaluation (cross-file detection) and parallel independent agents per file. Threshold default: 100K tokens.
+
+---
+
 ## Anthropic Engineering Team
 
 **skill-creator**: The `skill-creator` skill vendored in the Packmind repo (and referenced in this guide's skill evaluation section) was originally published by Anthropic. It contains the canonical evaluation harness for testing skills: evals filesystem convention, blind A/B comparator, description optimization loop, and benchmark aggregation scripts.

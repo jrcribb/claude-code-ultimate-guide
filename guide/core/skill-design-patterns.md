@@ -266,6 +266,78 @@ Both files are committed together and stay in the repo indefinitely.
 
 ---
 
+## Runtime Prompt Logging
+
+**Problem**: When an AI provider call times out or crashes, the exact prompt that was sent is gone. If you are building a skill or evaluation pipeline with multiple agents running in parallel, you lose the ability to diagnose what each agent was told. The `--debug` flag only helps when you remember to pass it.
+
+**Pattern**: Write the prompt to disk as a blocking operation BEFORE invoking the provider. Use a persistent directory with a timestamped filename. Never throw from the logging call.
+
+```typescript
+// Run BEFORE provider.invoke(), not after
+await writeFile(
+  `prompts/debug/${evaluatorName}-${timestamp}.md`,
+  fullPrompt,
+  "utf-8",
+);
+// Only now call the provider
+const response = await provider.invoke(fullPrompt);
+```
+
+Three constraints make this pattern work:
+
+1. **Blocking write** (`await`, not fire-and-forget): the file exists on disk before the provider call starts. A crash during the provider call leaves the prompt intact for inspection.
+2. **Always-on** (not gated by a debug flag): the overhead is a single file write per agent. The benefit is that any unexpected result has a permanent record.
+3. **Never throw**: logging failures must not break evaluations. Wrap the write in try/catch, log a warning on failure, continue.
+
+**Directory convention**: Use a project-root-relative path (`prompts/debug/` or `claudedocs/debug/`) rather than a temp directory. Temp directories get cleaned up; you want these to persist across runs.
+
+**Token cost**: Zero (disk I/O that happens outside the AI call). The prompt is already in memory, you are just persisting it.
+
+**When to use it**: Any skill that calls an AI provider and where the prompt is assembled dynamically (not just a static string). The value is proportional to prompt complexity: if your prompt injects ground truth, evaluator instructions, and file content, a single write before the call is cheap insurance.
+
+> Observed in [PackmindHub/context-evaluator](https://github.com/PackmindHub/context-evaluator) (`src/shared/evaluation/runtime-prompt-logger.ts`, MIT). See [Credits](./credits.md).
+
+---
+
+## Adaptive Unified/Parallel Mode
+
+**Problem**: You have N files to evaluate and need to decide: send all files to one agent (better for cross-file issues, higher context cost) or send each file to its own parallel agent (cheaper, faster, but blind to contradictions across files)?
+
+**Pattern**: Estimate the combined token count before committing to a strategy. If the total fits within a threshold, use unified mode (one agent sees everything). If it exceeds the threshold, fall back to independent parallel agents per file.
+
+```typescript
+const DEFAULT_MAX_UNIFIED_TOKENS = 100_000;
+
+function canUseUnifiedMode(context: MultiFileContext, maxTokens = DEFAULT_MAX_UNIFIED_TOKENS) {
+  if (context.totalTokenEstimate > maxTokens) {
+    return {
+      viable: false,
+      reason: `Combined content (~${context.totalTokenEstimate} tokens) exceeds limit (${maxTokens})`,
+    };
+  }
+  return { viable: true };
+}
+```
+
+Call this before building your agent prompts. The decision gates the rest of the pipeline:
+
+```
+estimateTokens(all files)
+  ↓
+< 100K → runUnifiedEvaluation(allFiles)   // 1 agent, cross-file detection
+> 100K → runAllEvaluators(file)           // N agents, per-file, parallel
+```
+
+**Why the threshold matters**: In unified mode, the agent can see contradictions between a root `CLAUDE.md` and a subdirectory `CLAUDE.md`. In parallel mode, each agent sees only one file and cannot detect those contradictions. The threshold preserves cross-file intelligence for smaller repos while staying within practical context limits for larger ones.
+
+**Threshold calibration**: 100K tokens leaves room for the evaluator prompt (typically 2-5K) and the model's response buffer. For your own use case, set the threshold to `model_context_window - evaluator_prompt_tokens - response_buffer`. Pac's `DEFAULT_MAX_UNIFIED_TOKENS = 100_000` is a conservative default for most current models.
+
+**Token estimation**: You do not need an exact count. A rough estimate (`chars / 4` for most English text) is sufficient for the mode decision. The cost of occasionally being 10% wrong on the estimate is much lower than the cost of the extra precision.
+
+> Observed in [PackmindHub/context-evaluator](https://github.com/PackmindHub/context-evaluator) (`src/shared/evaluation/runner.ts` `canUseUnifiedMode()`, MIT). See [Credits](./credits.md).
+
+---
+
 ## See Also
 
 - [Development Methodologies](./methodologies.md): TDD, SDD, BDD, multi-agent orchestration
