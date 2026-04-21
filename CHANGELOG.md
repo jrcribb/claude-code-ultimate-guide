@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+- **README.md**: Updated date badge (Apr 22, 2026), Quick Start with Learning Path entry, repo structure with `learning-path/` and `examples/CATALOG.md`, "5 unique gaps" updated from 4
+
 - **Learning Path (NEW)**: Added structured 7-module learning path for beginners
   - `guide/learning-path/README.md` — Meta guide with 7 modules, 3 learning tracks, time estimates
   - `guide/learning-path/01-installation.md` — Installation and first run (15 min)

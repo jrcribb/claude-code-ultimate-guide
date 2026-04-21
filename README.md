@@ -8,7 +8,7 @@
 <!-- Stats -->
 <p align="center">
   <a href="https://github.com/FlorianBruniaux/claude-code-ultimate-guide/stargazers"><img src="https://img.shields.io/github/stars/FlorianBruniaux/claude-code-ultimate-guide?style=for-the-badge" alt="Stars"/></a>
-  <a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Updated-Apr_20,_2026_·_v3.39.1-brightgreen?style=for-the-badge" alt="Last Update"/></a>
+  <a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Updated-Apr_22,_2026_·_v3.39.1-brightgreen?style=for-the-badge" alt="Last Update"/></a>
   <a href="./quiz/"><img src="https://img.shields.io/badge/Quiz-271_questions-orange?style=for-the-badge" alt="Quiz"/></a>
   <a href="./examples/"><img src="https://img.shields.io/badge/Templates-247-green?style=for-the-badge" alt="Templates"/></a>
 </p>
@@ -114,11 +114,12 @@ Both guides serve different needs. Choose based on your priority.
                       SPECIALIZED
 ```
 
-**4 unique gaps no competitor covers:**
+**5 unique gaps no competitor covers:**
 1. **Security-First** — 24 CVEs + 655 malicious skills tracked (no competitor has this depth)
 2. **Methodology Workflows** — TDD/SDD/BDD comparison + step-by-step guides
 3. **Comprehensive Reference** — 24K+ lines across 16 specialized guides (24× more reference material than everything-cc)
-4. **Educational Progression** — 271-question quiz, beginner → expert path
+4. **Educational Progression** — 271-question quiz + 7-module structured learning path (beginner → advanced)
+5. **Interactive Assessment** — `/self-assessment` skill with personalized learning path recommendations
 
 **Recommended workflow:**
 1. Learn concepts here (mental models, trade-offs, security)
@@ -131,6 +132,8 @@ Both guides serve different needs. Choose based on your priority.
 
 ## ⚡ Quick Start
 
+**New to Claude Code?** → [**7-Module Learning Path**](./guide/learning-path/README.md) — 8-11 hours, beginner to advanced
+
 **Quickest path**: [Cheat Sheet](./guide/cheatsheet.md) — 1 printable page with daily essentials
 
 **Interactive onboarding** (no setup needed):
@@ -138,7 +141,7 @@ Both guides serve different needs. Choose based on your priority.
 claude "Fetch and follow the onboarding instructions from: https://raw.githubusercontent.com/FlorianBruniaux/claude-code-ultimate-guide/main/tools/onboarding-prompt.md"
 ```
 
-**Browse directly**: [Full Guide](./guide/ultimate-guide.md) | [Visual Diagrams](./guide/diagrams/) | [Examples](./examples/) | [Quiz](./quiz/)
+**Browse directly**: [Full Guide](./guide/ultimate-guide.md) | [Learning Path](./guide/learning-path/) | [Visual Diagrams](./guide/diagrams/) | [Examples](./examples/) | [Quiz](./quiz/)
 
 ---
 
@@ -176,6 +179,7 @@ graph LR
     root[📦 Repository<br/>Root]
 
     root --> guide[📖 guide/<br/>24K+ lines]
+    root --> learning[🎓 learning-path/<br/>7 modules]
     root --> examples[📋 examples/<br/>247 templates]
     root --> quiz[🧠 quiz/<br/>271 questions]
     root --> tools[🔧 tools/<br/>utils]
@@ -184,6 +188,7 @@ graph LR
 
     style root fill:#d35400,stroke:#e67e22,stroke-width:3px,color:#fff
     style guide fill:#2980b9,stroke:#3498db,stroke-width:2px,color:#fff
+    style learning fill:#27ae60,stroke:#2ecc71,stroke-width:2px,color:#fff
     style examples fill:#8e44ad,stroke:#9b59b6,stroke-width:2px,color:#fff
     style quiz fill:#d68910,stroke:#f39c12,stroke-width:2px,color:#fff
     style tools fill:#5d6d7e,stroke:#7f8c8d,stroke-width:2px,color:#fff
@@ -198,6 +203,7 @@ graph LR
 📦 claude-code-ultimate-guide/
 │
 ├─ 📖 guide/              Core Documentation (24K+ lines)
+│  ├─ learning-path/      7-Module Learning Path (beginners → advanced)
 │  ├─ ultimate-guide.md   Complete reference, 10 sections
 │  ├─ cheatsheet.md       1-page printable
 │  ├─ architecture.md     How Claude Code works internally
@@ -208,10 +214,11 @@ graph LR
 │  └─ workflows/          Step-by-step guides
 │
 ├─ 📋 examples/           247 Production Templates
+│  ├─ CATALOG.md          Auto-generated index by complexity, time, domain
 │  ├─ agents/             23 custom AI personas
 │  ├─ commands/           52 slash commands
 │  ├─ hooks/              37 hooks (bash + PowerShell)
-│  ├─ skills/             14 skills (9 on SkillHub)
+│  ├─ skills/             64 skills (9 on SkillHub)
 │  └─ scripts/            Utility scripts (audit, search)
 │
 ├─ 🧠 quiz/               271 Questions
