@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+- **Ultrareview section** (guide): Added `/ultrareview <PR#>` syntax, clarified diff-only scope (not full codebase), added Scope row to Ultraplan vs Ultrareview comparison table
+
 - **Claude Code Releases**: Updated tracking to v2.1.118
   - Vim visual mode (`v`) and visual-line mode (`V`) with selection and operators
   - `/cost` and `/stats` merged into `/usage` (both old commands remain as shortcuts)

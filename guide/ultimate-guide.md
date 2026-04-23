@@ -3156,10 +3156,11 @@ Cloud-based parallel multi-agent code review. Where Ultraplan handles planning, 
 **Activation**:
 
 ```bash
-/ultrareview
+/ultrareview              # Review current branch (diff from base)
+/ultrareview <PR#>        # Review a specific GitHub PR
 ```
 
-Runs when you have staged or uncommitted changes. The cloud session dispatches parallel agents to review the diff; results are presented in the browser and can optionally be teleported back to the terminal.
+Ultrareview operates on **diffs, not the full codebase** — it reviews what changed on the current branch, or the changes in a given PR. The cloud session dispatches parallel agents to analyse the diff; results arrive in the browser and can optionally be teleported back to the terminal.
 
 **Launch offer**: Pro and Max subscribers receive three free ultrareviews to try the feature.
 
@@ -3176,7 +3177,8 @@ Runs when you have staged or uncommitted changes. The cloud session dispatches p
 | | Ultraplan | Ultrareview |
 |---|---|---|
 | Purpose | Plan before coding | Review after coding |
-| Input | Prompt describing the task | Current git diff |
+| Input | Prompt describing the task | Current branch diff or PR diff |
+| Scope | Unbounded | Diffs only (not full codebase) |
 | Output | Architectural plan | Bug and design issue report |
 
 ---
