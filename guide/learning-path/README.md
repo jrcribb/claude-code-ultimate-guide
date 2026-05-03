@@ -1,6 +1,6 @@
 # Claude Code Learning Path
 
-**Master Claude Code in 11-13 hours. Go deep on what matters to you.**
+**Master Claude Code in 8-11 hours. Go deep on what matters to you with optional deep dives.**
 
 This is your structured entry point. Follow the modules in order, then jump into the full guide for depth.
 

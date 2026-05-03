@@ -16,7 +16,7 @@ tags: [guide, reference, workflows, agents, hooks, mcp, security]
 
 **Last updated**: January 2026
 
-**Version**: 3.39.1
+**Version**: 3.40.0
 
 ---
 
@@ -2427,7 +2427,7 @@ Claude Code │ Ctx(u): 45% │ Cost: $0.23 │ Session: 1h 23m
 
 **Advanced tracking with `ccusage`**:
 
-The `ccusage` CLI tool provides detailed cost analytics beyond the `/cost` command:
+The `ccusage` CLI tool provides detailed cost analytics beyond the `/cost` command (use `/usage` since v2.1.118):
 
 ```bash
 ccusage                    # Overview all periods
@@ -2453,7 +2453,7 @@ ccusage --model-breakdown  # Cost by model (Sonnet/Opus/Haiku)
 └──────────────────────────────────────────────────────┘
 ```
 
-**Why use `ccusage` over `/cost`?**
+**Why use `ccusage` over `/cost` (alias for `/usage` since v2.1.118)?**
 - **Historical trends**: Track usage patterns over days/weeks/months
 - **Model breakdown**: See which model tier drives costs
 - **Budget planning**: Set monthly spending targets
@@ -3054,14 +3054,14 @@ User: Implement the plan from round 3.
 
 **Status**: Research preview — requires Claude Code v2.1.91+ and a Claude Code on the web account.
 
-**Concept**: Offload planning to Anthropic's cloud while your terminal stays free. Claude drafts the plan remotely using multiple Opus 4.6 agents in parallel; you review it in your browser with inline comments, then choose whether to execute in the cloud or teleport the plan back to your terminal.
+**Concept**: Offload planning to Anthropic's cloud while your terminal stays free. Claude drafts the plan remotely using multiple Opus 4.7+ agents in parallel; you review it in your browser with inline comments, then choose whether to execute in the cloud or teleport the plan back to your terminal.
 
 This solves the core friction of local Plan Mode: on complex tasks, the terminal blocks for minutes while planning runs. Ultraplan runs asynchronously — you keep working, check back when ready.
 
 **How It Works**
 
 1. CLI launches a cloud session → terminal shows a live status indicator
-2. Multiple Opus 4.6 agents explore the codebase in parallel (planning windows up to 30 minutes)
+2. Multiple Opus 4.7+ agents explore the codebase in parallel (planning windows up to 30 minutes)
 3. Browser opens the plan with outline sidebar, inline commenting, and emoji reactions
 4. You iterate on the plan — comment on specific sections, request revisions
 5. Choose where to execute: cloud (opens a PR) or terminal (teleports the plan back)
@@ -5528,7 +5528,7 @@ The `.claude/` folder is your project's Claude Code directory for memory, settin
 | Personal preferences | `CLAUDE.md` | ❌ Gitignore |
 | Personal permissions | `settings.local.json` | ❌ Gitignore |
 
-### 3.39.1 Version Control & Backup
+### 3.40.0 Version Control & Backup
 
 **Problem**: Without version control, losing your Claude Code configuration means hours of manual reconfiguration across agents, skills, hooks, and MCP servers.
 
@@ -8801,7 +8801,7 @@ Slash commands are shortcuts for common workflows.
 | `/compact` | Summarize context |
 | `/status` | Show session info |
 | `/context` | Detailed context/token breakdown with actionable suggestions |
-| `/cost` | Per-model token cost breakdown for the session |
+| `/cost` | Per-model token cost breakdown for the session *(use `/usage` since v2.1.118)* |
 | `/plan` | Enter Plan Mode |
 | `/rewind` | Undo changes |
 | `/undo` | Alias for /rewind |
@@ -10542,7 +10542,7 @@ echo "Exit code: $?"  # Should be 0
 
 The Claude Code team uses a pattern where permission requests are routed to a **more capable model** acting as a security gate, rather than relying solely on static rule matching.
 
-**Concept**: A `PreToolUse` hook intercepts permission requests and forwards them to Opus 4.6 (or another capable model) via the API. The gate model scans for prompt injection, dangerous patterns, and unexpected tool usage — then auto-approves safe requests or blocks suspicious ones.
+**Concept**: A `PreToolUse` hook intercepts permission requests and forwards them to Opus 4.7 (or another capable model) via the API. The gate model scans for prompt injection, dangerous patterns, and unexpected tool usage — then auto-approves safe requests or blocks suspicious ones.
 
 ```bash
 # .claude/hooks/opus-security-gate.sh (conceptual)
@@ -18996,7 +18996,7 @@ Boris Cherny, creator of Claude Code, shared his workflow orchestrating 5-15 Cla
 - **5-10 instances** on claude.ai/code (`--teleport` to sync with local)
 - **Git worktrees** for isolation (each instance = separate checkout)
 - **CLAUDE.md**: 2.5k tokens, team-shared and versioned in git
-- **Model**: Opus 4.6 (slower but fewer corrections needed, adaptive thinking)
+- **Model**: Opus 4.6 or Opus 4.7 (slower but fewer corrections needed, adaptive thinking)
 - **Slash commands**: `/commit-push-pr` used "dozens of times per day"
 
 **Results** (30 days, January 2026):
@@ -19018,7 +19018,7 @@ Boris Cherny, creator of Claude Code, shared his workflow orchestrating 5-15 Cla
 
 > **On verification loops**: "I give Claude a way to verify output (browser/tests): verification drives quality."
 
-**Why Opus 4.6 with Adaptive Thinking**: Although more expensive per token ($5/1M input vs $3/1M for Sonnet, or $10/1M for 1M context beta), Opus requires fewer correction iterations thanks to adaptive thinking. Net result: faster delivery and lower total cost despite higher unit price.
+**Why Opus 4.6 or Opus 4.7 with Adaptive Thinking**: Although more expensive per token ($5/1M input vs $3/1M for Sonnet), Opus requires fewer correction iterations thanks to adaptive thinking. Net result: faster delivery and lower total cost despite higher unit price.
 
 **The supervision model**: Boris describes his role as "tending to multiple agents" rather than "doing every click yourself." The workflow becomes about **steering outcomes** across 5-10 parallel sessions, unblocking when needed, rather than sequential execution.
 
@@ -22185,7 +22185,7 @@ I'll decide based on our team context.
 
 **Reading time**: 5 minutes (overview) | [Quick Start →](./workflows/agent-teams-quick-start.md) (8-10 min, practical) | [Full workflow guide →](./workflows/agent-teams.md) (~30 min, theory)
 **Skill level**: Month 2+ (Advanced)
-**Status**: ⚠️ Experimental (v2.1.32+, Opus 4.6 required)
+**Status**: ⚠️ Experimental (v2.1.32+, Opus 4.6 or Opus 4.7 required)
 
 ### What Are Agent Teams?
 
@@ -22211,7 +22211,7 @@ OR in ~/.claude/settings.json:
 ### When Introduced & Production Validation
 
 **Version**: v2.1.32 (2026-02-05) as research preview
-**Model requirement**: Opus 4.6 minimum
+**Model requirement**: Opus 4.6 or Opus 4.7 minimum
 
 **Production metrics** (validated cases):
 - **Fountain** (workforce management): 50% faster screening, 2x conversions
@@ -22779,7 +22779,7 @@ Before moving to Section 10 (Reference), verify you understand:
 - [ ] **Remote Control**: Monitor/control local sessions from mobile or browser (Research Preview, Pro/Max)
 - [ ] **Background Tasks**: Run tasks in cloud while working locally (`%` prefix)
 - [ ] **Multi-Instance Scaling**: Understand when/how to orchestrate parallel Claude instances (advanced teams only)
-- [ ] **Agent Teams**: Multi-agent coordination for read-heavy tasks (experimental, Opus 4.6+)
+- [ ] **Agent Teams**: Multi-agent coordination for read-heavy tasks (experimental, Opus 4.7+)
 - [ ] **Permutation Frameworks**: Systematically test multiple approaches before committing
 - [ ] **Legacy Modernization**: 4-step workflow (Discovery → Risk → Planning → Incremental) for large legacy codebases
 
@@ -25365,4 +25365,4 @@ We'll evaluate and add it to this section if it meets quality criteria.
 
 **Contributions**: Issues and PRs welcome.
 
-**Last updated**: January 2026 | **Version**: 3.39.1
+**Last updated**: January 2026 | **Version**: 3.40.0

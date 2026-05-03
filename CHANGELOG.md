@@ -6,6 +6,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+- **Whitepapers updated** (FR + EN): WP00, WP01, WP03, WP04, WP07 updated for v3.40.0 content
+  - WP00 (Introduction): agentic capabilities table — added Auto mode Max, `/ultrareview`, xhigh effort Opus 4.7 rows
+  - WP01 (Effective Prompts): slash commands table — added `/ultrareview` and `/less-permission-prompts`; glob pattern behavior note; plan file naming note in Decision Tree; Memo callout updated
+  - WP03 (Security): v2.1.111 glob pattern behavior (read-only no longer prompts); `/less-permission-prompts` allowlist workflow; Auto mode flag removal note
+  - WP04 (Architecture): new "xhigh effort level" subsection (FR + EN); comparison table updated for Opus 4.7 as flagship
+  - WP07 (Reference Guide): effort enum updated to include xhigh; `/effort` command table extended; new commands table rows for `/ultrareview` and `/less-permission-prompts`; permission modes callout updated; footer updated
+
+---
+
+## [3.40.0] - 2026-05-03
+
+### Soft Flurry consistency pass
+
+- **Deprecated commands annotated** : `/cost` and `/stats` annotated as aliases for `/usage` (v2.1.118) across guide top-level, cheatsheets cards, recap cards, and machine-readable files. Not removed — preserves backward compatibility for users still typing `/cost`.
+- **Counters harmonized** : templates (181 per CATALOG.md generator), quiz (271), CVEs (28+ per Threat DB v2.15.0), malicious skills (655), Mermaid diagrams (real count). Single source of truth: `examples/CATALOG.md` for templates, Threat DB for CVEs.
+- **Opus 4.7 + xhigh propagated** : targeted edits in ultimate-guide.md, diagrams, landing components, and cheatsheets cards.
+- **Threat DB v2.15.0 propagated** : `src/data/security-data.ts` in landing site updated with version, 5+ new CVEs (CVE-2026-30623, CVE-2026-40933, CVE-2026-33224, CVE-2025-69256, CVE-2026-6494, CVE-2026-33032), attack techniques T026 and T027.
+- **Broken `threat-db.yaml` link fixed** : README was pointing to `machine-readable/threat-db.yaml` (non-existent); corrected to `examples/commands/resources/threat-db.yaml`.
+- **3 SoT files resynchronized** : `CLAUDE.md` (VERSION 3.34.1 → 3.40.0), `llms-full.txt` (embedded cheatsheet block 3.34.4 → 3.40.0), `reference.yaml` (updated date).
+- **Recap cards rebuilt** : 5 delivered cards (01, 03, 04, 06, 25) updated + wp-version bumped minor + PDFs regenerated.
+- **Announcement banner** : BANNER_ID bumped to reset dismissed state for all visitors, new message highlighting Routines + Opus 4.7.
+- **9 new commands added** to machine-readable index: `/usage`, `/recap`, `/effort`, `/tui`, `/focus`, `/less-permission-prompts`, `/ultrareview`, `/proactive`, `/undo`.
+
+- **Security**: Updated threat database to v2.16.0 (2026-05-03)
+  - 6 new CVEs: CVE-2026-35021 (Claude Code CLI command injection), CVE-2026-39861 (Claude Code RCE, Sonar research), CVE-2026-30625 (Upsonic RCE), CVE-2026-7593 (command-executor-mcp 0-day), CVE-2026-7591 (astro-mcp-server), CVE-2026-5059 (aws-mcp-server second 0-day)
+  - 2 new campaigns: ClawHub Crypto Swarm (30 skills hijacking agents as $FLY miners), Hugging Face + ClawHub malware via indirect prompt injection
+  - 1 new scanning tool: Cisco AI Agent Security Scanner for IDEs (VS Code extension, April 21)
+  - 12 new sources, 3 new minimum_safe_version entries, 1 new IOC (onlyflies.buzz)
+
 - **Resource Evaluation**: Sandcastle (`@ai-hero/sandcastle`) — score 3/5 (Watch)
   - Evaluation file: `docs/resource-evaluations/083-sandcastle-agent-orchestration.md`
   - Added to Known Gaps table in `guide/ecosystem/third-party-tools.md` (programmatic sandboxed orchestration)

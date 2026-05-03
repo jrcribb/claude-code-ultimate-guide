@@ -8,14 +8,14 @@
 <!-- Stats -->
 <p align="center">
   <a href="https://github.com/FlorianBruniaux/claude-code-ultimate-guide/stargazers"><img src="https://img.shields.io/github/stars/FlorianBruniaux/claude-code-ultimate-guide?style=for-the-badge" alt="Stars"/></a>
-  <a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Updated-Apr_29,_2026_·_v3.39.1-brightgreen?style=for-the-badge" alt="Last Update"/></a>
+  <a href="./CHANGELOG.md"><img src="https://img.shields.io/badge/Updated-mai_3,_2026_·_v3.40.0-brightgreen?style=for-the-badge" alt="Last Update"/></a>
   <a href="./quiz/"><img src="https://img.shields.io/badge/Quiz-271_questions-orange?style=for-the-badge" alt="Quiz"/></a>
-  <a href="./examples/"><img src="https://img.shields.io/badge/Templates-247-green?style=for-the-badge" alt="Templates"/></a>
+  <a href="./examples/"><img src="https://img.shields.io/badge/Templates-181-green?style=for-the-badge" alt="Templates"/></a>
 </p>
 
 <!-- Features -->
 <p align="center">
-  <a href="./guide/security/security-hardening.md"><img src="https://img.shields.io/badge/🛡️_Threat_DB-15_vulnerabilities_·_655_malicious_skills-red?style=for-the-badge" alt="Threat Database"/></a>
+  <a href="./guide/security/security-hardening.md"><img src="https://img.shields.io/badge/🛡️_Threat_DB-28_vulnerabilities_·_655_malicious_skills-red?style=for-the-badge" alt="Threat Database"/></a>
   <a href="./mcp-server/"><img src="https://img.shields.io/badge/MCP_Server-npx_ready-blueviolet?style=for-the-badge" alt="MCP Server"/></a>
 </p>
 
@@ -70,9 +70,9 @@
 **This guide teaches you to think differently about AI-assisted development:**
 - ✅ **Understand trade-offs** — When to use agents vs skills vs commands (not just how to configure them)
 - ✅ **Build mental models** — How Claude Code works internally (architecture, context flow, tool orchestration)
-- ✅ **Visualize concepts** — 41 Mermaid diagrams covering model selection, master loop, memory hierarchy, multi-agent patterns, security threats, AI fluency paths
+- ✅ **Visualize concepts** — 48 Mermaid diagrams covering model selection, master loop, memory hierarchy, multi-agent patterns, security threats, AI fluency paths
 - ✅ **Master methodologies** — TDD, SDD, BDD with AI collaboration (not just templates)
-- ✅ **Security mindset** — Threat modeling for AI systems (only guide with 24 CVEs + 655 malicious skills database)
+- ✅ **Security mindset** — Threat modeling for AI systems (only guide with 28 CVEs + 655 malicious skills database)
 - ✅ **Test your knowledge** — 271-question quiz to validate understanding (no other resource offers this)
 
 **Outcome**: Go from copy-pasting configs to designing your own agentic workflows with confidence.
@@ -88,10 +88,10 @@ Both guides serve different needs. Choose based on your priority.
 | **Understand why** patterns work | Deep explanations + architecture | Config-focused |
 | **Quick setup** for projects | Available but not the priority | Battle-tested production configs |
 | **Learn trade-offs** (agents vs skills) | Decision frameworks + comparisons | Lists patterns, no trade-off analysis |
-| **Security hardening** | Only threat database (24 CVEs) | Basic patterns only |
+| **Security hardening** | Only threat database (28 CVEs) | Basic patterns only |
 | **Test understanding** | 271-question quiz | Not available |
 | **Methodologies** (TDD/SDD/BDD) | Full workflow guides | Not covered |
-| **Copy-paste ready** templates | 247 templates | 200+ templates |
+| **Copy-paste ready** templates | 181 templates | 200+ templates |
 
 ### Ecosystem Positioning
 
@@ -115,7 +115,7 @@ Both guides serve different needs. Choose based on your priority.
 ```
 
 **5 unique gaps no competitor covers:**
-1. **Security-First** — 24 CVEs + 655 malicious skills tracked (no competitor has this depth)
+1. **Security-First** — 28 CVEs + 655 malicious skills tracked (no competitor has this depth)
 2. **Methodology Workflows** — TDD/SDD/BDD comparison + step-by-step guides
 3. **Comprehensive Reference** — 24K+ lines across 16 specialized guides (24× more reference material than everything-cc)
 4. **Educational Progression** — 271-question quiz + 7-module structured learning path (beginner → advanced)
@@ -180,11 +180,11 @@ graph LR
 
     root --> guide[📖 guide/<br/>24K+ lines]
     root --> learning[🎓 learning-path/<br/>7 modules]
-    root --> examples[📋 examples/<br/>247 templates]
+    root --> examples[📋 examples/<br/>181 templates]
     root --> quiz[🧠 quiz/<br/>271 questions]
     root --> tools[🔧 tools/<br/>utils]
     root --> machine[🤖 machine-readable/<br/>AI index]
-    root --> docs[📚 docs/<br/>115 evaluations]
+    root --> docs[📚 docs/<br/>151 evaluations]
 
     style root fill:#d35400,stroke:#e67e22,stroke-width:3px,color:#fff
     style guide fill:#2980b9,stroke:#3498db,stroke-width:2px,color:#fff
@@ -208,12 +208,12 @@ graph LR
 │  ├─ cheatsheet.md       1-page printable
 │  ├─ architecture.md     How Claude Code works internally
 │  ├─ methodologies.md    TDD, SDD, BDD workflows
-│  ├─ diagrams/           41 Mermaid diagrams (10 thematic files)
+│  ├─ diagrams/           48 Mermaid diagrams (10 thematic files)
 │  ├─ third-party-tools.md  Community tools (RTK, ccusage, Entire CLI)
 │  ├─ mcp-servers-ecosystem.md  Official & community MCP servers
 │  └─ workflows/          Step-by-step guides
 │
-├─ 📋 examples/           247 Production Templates
+├─ 📋 examples/           181 Production Templates
 │  ├─ CATALOG.md          Auto-generated index by complexity, time, domain
 │  ├─ agents/             23 custom AI personas
 │  ├─ commands/           52 slash commands
@@ -235,7 +235,7 @@ graph LR
 │  ├─ claude-code-releases.yaml  Structured releases changelog
 │  └─ llms.txt            Standard LLM context file
 │
-└─ 📚 docs/               115 Resource Evaluations
+└─ 📚 docs/               151 Resource Evaluations
    └─ resource-evaluations/  5-point scoring, source attribution
 ```
 
@@ -259,18 +259,18 @@ graph LR
 
 ---
 
-### 🖼️ Visual Diagrams Series (41 Mermaid Diagrams)
+### 🖼️ Visual Diagrams Series (48 Mermaid Diagrams)
 
 **Outcome**: Grasp complex concepts instantly through visual mental models.
 
-**41 interactive diagrams** across 10 thematic files — GitHub-native Mermaid rendering + ASCII fallback for every diagram:
+**48 interactive diagrams** across 10 thematic files — GitHub-native Mermaid rendering + ASCII fallback for every diagram:
 - [Foundations](./guide/diagrams/01-foundations.md) — 4-layer context model, 9-step pipeline, permission modes
 - [Architecture](./guide/diagrams/04-architecture-internals.md) — Master loop, tool categories, system prompt assembly
 - [Multi-Agent](./guide/diagrams/07-multi-agent-patterns.md) — 3 topologies, worktrees, dual-instance, horizontal scaling
 - [Security](./guide/diagrams/08-security-and-production.md) — 3-layer defense, MCP rug pull attack chain, verification paradox
 - [Cost & Models](./guide/diagrams/09-cost-and-optimization.md) — Model selection tree, token reduction pipeline
 
-[Browse all 41 diagrams →](./guide/diagrams/)
+[Browse all 48 diagrams →](./guide/diagrams/)
 
 **What this means for you**: Understand the master loop before reading 24K+ lines, see multi-agent topologies at a glance, share visual security threat models with your team.
 
@@ -281,11 +281,11 @@ graph LR
 **Outcome**: Protect production systems from AI-specific attacks.
 
 **Only guide with systematic threat tracking**:
-- **24 CVE-mapped vulnerabilities** — Prompt injection, data exfiltration, code injection
+- **28 CVE-mapped vulnerabilities** — Prompt injection, data exfiltration, code injection
 - **655 malicious skills catalogued** — Unicode injection, hidden instructions, auto-execute patterns
 - **Production hardening workflows** — MCP vetting, injection defense, audit automation
 
-[Threat Database →](./machine-readable/threat-db.yaml) | [Security Guide →](./guide/security/security-hardening.md)
+[Threat Database →](./examples/commands/resources/threat-db.yaml) | [Security Guide →](./guide/security/security-hardening.md)
 
 **What this means for you**: Vet MCP servers before trusting them, detect attack patterns in configs, comply with security audits.
 
@@ -335,12 +335,12 @@ Complete guides with rationale and examples:
 
 ---
 
-### 📚 204 Annotated Templates
+### 📚 181 Annotated Templates
 
 **Outcome**: Learn patterns, not just configs.
 
 Educational templates with explanations:
-- Agents (6), Commands (26), Hooks (31), Skills
+- Agents (23), Commands (52), Hooks (37), Skills (64)
 - Comments explaining **why** each pattern works (not just what it does)
 - Gradual complexity progression (simple → advanced)
 
@@ -350,7 +350,7 @@ Educational templates with explanations:
 
 ---
 
-### 🔍 115 Resource Evaluations
+### 🔍 151 Resource Evaluations
 
 **Outcome**: Trust our recommendations are evidence-based.
 
@@ -401,7 +401,7 @@ Systematic assessment of external resources (5-point scoring):
 4. [MCP Servers](./guide/ultimate-guide.md#8-mcp-servers) — Extended capabilities
 5. [Trinity Pattern](./guide/ultimate-guide.md#91-the-trinity) — Advanced workflows
 6. [Observability](./guide/ops/observability.md) — Monitor costs & sessions
-7. [Agent Teams](./guide/workflows/agent-teams.md) — Multi-agent coordination (Opus 4.6 experimental)
+7. [Agent Teams](./guide/workflows/agent-teams.md) — Multi-agent coordination (Opus 4.7+ experimental)
 8. [Examples](./examples/) — Production templates
 
 </details>
@@ -475,7 +475,7 @@ Claude Code can generate 1.75x more logic errors than human-written code ([ACM 2
 
 ### 2. Never Approve MCPs from Unknown Sources
 
-24 CVEs identified in Claude Code ecosystem. 655 malicious skills in supply chain. MCP servers can read/write your codebase.
+28 CVEs identified in Claude Code ecosystem. 655 malicious skills in supply chain. MCP servers can read/write your codebase.
 
 **Strategy:** Systematic audit (5-min checklist). Community-vetted MCP Safe List. Vetting workflow documented in guide.
 
@@ -510,7 +510,7 @@ TDD/SDD/BDD are not optional with Claude Code. AI accelerates bad code as much a
 | # | Rule | Key Metric | Action |
 |---|------|------------|--------|
 | 1 | Verify Trust | 1.75x more logic errors | Test everything, peer review |
-| 2 | Vet MCPs | 24 CVEs, 655 malicious skills | 5-min audit checklist |
+| 2 | Vet MCPs | 28 CVEs, 655 malicious skills | 5-min audit checklist |
 | 3 | Manage Context | 70% = precision loss | `/compact` at 70%, `/clear` at 90% |
 | 4 | Start Simple | 2-week test period | Phase 1→4 progressive adoption |
 | 5 | Use Methodologies | AI amplifies good AND bad | TDD/SDD/BDD by context |
@@ -667,13 +667,13 @@ claude plugin install session-summary      # Session analytics dashboard (15 sec
 | Tool | Purpose | Maintained By |
 |------|---------|---------------|
 | [claude-code-security-review](https://github.com/anthropics/claude-code-security-review) | GitHub Action for automated security scanning | Anthropic (official) |
-| This Guide's Threat DB | Intelligence layer (24 CVEs, 655 malicious skills) | Community |
+| This Guide's Threat DB | Intelligence layer (28 CVEs, 655 malicious skills) | Community |
 
 **Workflow**: Use GitHub Action for automation → Consult Threat DB for threat intelligence.
 
 ### Threat Database
 
-**24 CVE-mapped vulnerabilities** and **655 malicious skills** tracked in [`machine-readable/threat-db.yaml`](./machine-readable/threat-db.yaml):
+**28 CVE-mapped vulnerabilities** and **655 malicious skills** tracked in [`examples/commands/resources/threat-db.yaml`](./examples/commands/resources/threat-db.yaml):
 
 | Threat Category | Count | Examples |
 |----------------|-------|----------|
@@ -682,7 +682,7 @@ claude plugin install session-summary      # Session analytics dashboard (15 sec
 | **RCE & Prompt Hijacking** | 4 CVEs | MCP Inspector RCE (CVE-2025-49596), session hijack |
 | **SSRF & DNS Rebinding** | 4 CVEs | WebFetch SSRF (CVE-2026-24052), DNS rebinding |
 | **Data Leakage** | 1 CVE | Cross-client response leak (CVE-2026-25536) |
-| **Malicious Skills** | 341 patterns | Unicode injection, hidden instructions, auto-execute |
+| **Malicious Skills** | 655 patterns | Unicode injection, hidden instructions, auto-execute |
 
 **Taxonomies**: 10 attack surfaces × 11 threat types × 8 impact levels
 
@@ -706,7 +706,7 @@ claude plugin install session-summary      # Session analytics dashboard (15 sec
 
 ### Security Hooks
 
-**30 production hooks** (bash + PowerShell) in [`examples/hooks/`](./examples/hooks/):
+**37 production hooks** (bash + PowerShell) in [`examples/hooks/`](./examples/hooks/):
 
 | Hook | Purpose |
 |------|---------|
@@ -738,7 +738,7 @@ This guide is the result of **6 months of daily practice** with Claude Code. The
 **What you'll find:**
 - Patterns verified in production (not theory)
 - Trade-off explanations (not just "here's how to do it")
-- Security first (24 CVEs tracked)
+- Security first (28 CVEs tracked)
 - Transparency on limitations (Claude Code isn't magic)
 
 **What you won't find:**
@@ -792,15 +792,15 @@ Use this guide critically. Experiment. Share what works for you.
 | **[Credits](./guide/core/credits.md)** | Open-source inspirations and pattern attributions | 2 min |
 
 <details>
-<summary><strong>Examples Library</strong> (247 templates)</summary>
+<summary><strong>Examples Library</strong> (181 templates)</summary>
 
-**Agents** (6): [code-reviewer](./examples/agents/code-reviewer.md), [test-writer](./examples/agents/test-writer.md), [security-auditor](./examples/agents/security-auditor.md), [refactoring-specialist](./examples/agents/refactoring-specialist.md), [output-evaluator](./examples/agents/output-evaluator.md), [devops-sre](./examples/agents/devops-sre.md) ⭐
+**Agents** (23): [code-reviewer](./examples/agents/code-reviewer.md), [test-writer](./examples/agents/test-writer.md), [security-auditor](./examples/agents/security-auditor.md), [refactoring-specialist](./examples/agents/refactoring-specialist.md), [output-evaluator](./examples/agents/output-evaluator.md), [devops-sre](./examples/agents/devops-sre.md) ⭐
 
-**Slash Commands** (26): [/pr](./examples/commands/pr.md), [/commit](./examples/commands/commit.md), [/release-notes](./examples/commands/release-notes.md), [/diagnose](./examples/commands/diagnose.md), [/security](./examples/commands/security.md), [/security-check](./examples/commands/security-check.md) **, [/security-audit](./examples/commands/security-audit.md) **, [/update-threat-db](./examples/commands/update-threat-db.md) **, [/refactor](./examples/commands/refactor.md), [/explain](./examples/commands/explain.md), [/optimize](./examples/commands/optimize.md), [/ship](./examples/commands/ship.md)...
+**Slash Commands** (52): [/pr](./examples/commands/pr.md), [/commit](./examples/commands/commit.md), [/release-notes](./examples/commands/release-notes.md), [/diagnose](./examples/commands/diagnose.md), [/security](./examples/commands/security.md), [/security-check](./examples/commands/security-check.md) **, [/security-audit](./examples/commands/security-audit.md) **, [/update-threat-db](./examples/commands/update-threat-db.md) **, [/refactor](./examples/commands/refactor.md), [/explain](./examples/commands/explain.md), [/optimize](./examples/commands/optimize.md), [/ship](./examples/commands/ship.md)...
 
-**Security Hooks** (31): [dangerous-actions-blocker](./examples/hooks/bash/dangerous-actions-blocker.sh), [prompt-injection-detector](./examples/hooks/bash/prompt-injection-detector.sh), [unicode-injection-scanner](./examples/hooks/bash/unicode-injection-scanner.sh), [output-secrets-scanner](./examples/hooks/bash/output-secrets-scanner.sh)...
+**Security Hooks** (37): [dangerous-actions-blocker](./examples/hooks/bash/dangerous-actions-blocker.sh), [prompt-injection-detector](./examples/hooks/bash/prompt-injection-detector.sh), [unicode-injection-scanner](./examples/hooks/bash/unicode-injection-scanner.sh), [output-secrets-scanner](./examples/hooks/bash/output-secrets-scanner.sh)...
 
-**Skills** (1): [Claudeception](https://github.com/blader/Claudeception) — Meta-skill that auto-generates skills from session discoveries ⭐
+**Skills** (64): [Claudeception](https://github.com/blader/Claudeception) — Meta-skill that auto-generates skills from session discoveries ⭐
 
 **Plugins** (1): [SE-CoVe](./examples/plugins/se-cove.md) — Chain-of-Verification for independent code review (Meta AI, ACL 2024)
 
@@ -830,7 +830,7 @@ cd quiz && npm install && npm start
 </details>
 
 <details>
-<summary><strong>Resource Evaluations</strong> (116 assessments)</summary>
+<summary><strong>Resource Evaluations</strong> (151 assessments)</summary>
 
 Systematic evaluation of external resources (tools, methodologies, articles) before integration into the guide.
 
@@ -934,7 +934,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ---
 
-*Version 3.39.1 | Updated daily · Apr 29, 2026 | Crafted with Claude*
+*Version 3.40.0 | Updated daily · mai 3, 2026 | Crafted with Claude*
 
 <!-- SEO Keywords -->
 <!-- claude code, claude code tutorial, anthropic cli, ai coding assistant, claude code mcp,
